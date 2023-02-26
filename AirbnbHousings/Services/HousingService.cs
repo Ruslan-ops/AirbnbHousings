@@ -1,17 +1,22 @@
-﻿using Minio;
+﻿using Microsoft.AspNetCore.Mvc;
+using Minio;
 using System.Security.Cryptography.X509Certificates;
 
 namespace AirbnbHousings.Services
 {
     public class HousingService
     {
-        public HousingService() 
-        {
-            
+        private readonly MinioClient _minioClient;
 
+        public HousingService(MinioClient minioClient)
+        {
+            _minioClient = minioClient;
         }
 
-        public async Task CreateImage()
+
+        
+
+        public async Task UploadImage()
         {
 
             // Instantiate a Minio client with your endpoint, access key, and secret key.

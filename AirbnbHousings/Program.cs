@@ -1,25 +1,62 @@
-var builder = WebApplication.CreateBuilder(args);
+using Minio;
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+static MinioClient CreateClient(IServiceProvider provider)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var endpoint = "localhost:9000";
+    var accessKey = "ROOTUSER";
+    var secretKey = "CHANGEME123";
+    var x = new MinioClient().WithEndpoint(endpoint).WithCredentials(accessKey, secretKey).Build();
+    return x;
 }
 
-app.UseHttpsRedirection();
+try
+{
 
-app.UseAuthorization();
 
-app.MapControllers();
+    var builder = WebApplication.CreateBuilder(args);
 
-app.Run();
+    //Add services to the container.
+
+   builder.Services.AddCors(options =>
+   {
+       options.AddPolicy("CorsPolicy", builder =>
+       {
+           builder.WithOrigins("http://localhost:3000")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+       });
+   });
+
+    builder.Services.AddControllers();
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    //builder.Services.AddEndpointsApiExplorer();
+    //builder.Services.AddSwaggerGen();
+
+
+
+    builder.Services.AddScoped(CreateClient);
+
+    var app = builder.Build();
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+        //app.UseSwagger();
+        //app.UseSwaggerUI();
+    }
+
+    app.UseCors("CorsPolicy");
+
+    //app.UseHttpsRedirection();
+
+    //app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
+}
+catch (Exception e)
+{
+    Console.WriteLine(e.Message);
+}

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirbnbHousings.Controllers
@@ -17,6 +18,8 @@ namespace AirbnbHousings.Controllers
         {
             _logger = logger;
         }
+
+        
 
         [HttpGet(Name = "get")]
         public IEnumerable<WeatherForecast> Get()
