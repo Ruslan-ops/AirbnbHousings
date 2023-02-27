@@ -1,4 +1,7 @@
+using AirbnbHousings.Models;
 using AirbnbHousings.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Minio;
 
 static MinioClient CreateClient(IServiceProvider provider)
@@ -30,13 +33,16 @@ try
 
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    //builder.Services.AddEndpointsApiExplorer();
-    //builder.Services.AddSwaggerGen();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 
 
 
     builder.Services.AddScoped(CreateClient);
-    builder.Services.AddScoped<HousingService>();
+    builder.Services.AddScoped<MinioService>();
+    builder.Services.AddDbContext<AirbnbContext>(options =>
+        options.UseNpgsql("Host=localhost;Port=5466;Database=airbnb;Username=postgres;Password=postgres"));
+    builder.Services.AddScoped<PostgresService>();
 
     var app = builder.Build();
 
@@ -44,8 +50,8 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.UseDeveloperExceptionPage();
-        //app.UseSwagger();
-        //app.UseSwaggerUI();
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
 
     app.UseCors("CorsPolicy");
