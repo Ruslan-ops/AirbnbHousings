@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using AirbnbHousings.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Minio;
 using Newtonsoft.Json;
@@ -9,17 +10,16 @@ namespace AirbnbHousings.Controllers
     [Route("housings")]
     public class HousingController : Controller
     {
-        private readonly MinioClient _minioClient;
+        private readonly HousingService _housingService;
 
-        public HousingController(MinioClient minioClient)
+        public HousingController(HousingService housingService)
         {
-            _minioClient = minioClient;
+            _housingService = housingService;
         }
 
         [HttpGet("all")]
         public IActionResult Get()
         {
-            Console.WriteLine(_minioClient.ToString());
             return Ok("successsss");
         }
 
@@ -32,9 +32,6 @@ namespace AirbnbHousings.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> UploadImage(IFormFile image)
         {
-            var cli = JsonConvert.SerializeObject(_minioClient);
-            await Console.Out.WriteLineAsync((_minioClient is null).ToString());
-            await Console.Out.WriteLineAsync(cli);
 
             if (image == null)
             {
@@ -42,24 +39,8 @@ namespace AirbnbHousings.Controllers
             }
 
             // Get the image stream and metadata.
-            var stream = image.OpenReadStream();
-            var contentType = image.ContentType;
-            var contentDisposition = image.ContentDisposition;
-            
-            // Upload the image to the MinIO bucket.
-            var bucketName = "images";
-            var objectName = $@"/housing/{Guid.NewGuid()}.jpg";
-            var args = new PutObjectArgs()
-                .WithBucket(bucketName)
-                .WithObject(objectName)
-                .WithContentType(contentType)
-                .WithObjectSize(image.Length)
-                .WithStreamData(stream);
-            await _minioClient.PutObjectAsync(args);
-
-            var urlArgs = new PresignedGetObjectArgs().WithObject(objectName).WithBucket(bucketName).WithExpiry(60 * 60 * 24 * 7);
-            var url = await _minioClient.PresignedGetObjectAsync(urlArgs);
-            await Console.Out.WriteLineAsync(url);
+            var uploadResult = await _housingService.UploadImage(image);
+            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(uploadResult));
             return Ok();
             //return new Ok("Image uploaded successfully");
         }

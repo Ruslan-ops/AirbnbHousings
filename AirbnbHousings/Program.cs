@@ -1,3 +1,4 @@
+using AirbnbHousings.Services;
 using Minio;
 
 static MinioClient CreateClient(IServiceProvider provider)
@@ -35,6 +36,7 @@ try
 
 
     builder.Services.AddScoped(CreateClient);
+    builder.Services.AddScoped<HousingService>();
 
     var app = builder.Build();
 

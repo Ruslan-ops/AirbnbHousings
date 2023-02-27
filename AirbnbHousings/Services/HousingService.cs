@@ -12,23 +12,37 @@ namespace AirbnbHousings.Services
         {
             _minioClient = minioClient;
         }
-
-
         
 
-        public async Task UploadImage()
+        public async Task<UploadResult> UploadImage(IFormFile image)
         {
 
-            // Instantiate a Minio client with your endpoint, access key, and secret key.
-            using(var client = new MinioClient("localhost:9000", "ROOTUSER", "ROOTUSER").WithSSL())
-            {
-                await client.PutObjectAsync(new PutObjectArgs());
-                await client.PutObjectAsync("mybucket", "myimage.jpg", "path/to/image.jpg", "image/jpeg");
-            }
-            
+            var stream = image.OpenReadStream();
+            var contentType = image.ContentType;
+            var contentDisposition = image.ContentDisposition;
 
-            // Upload an image file to the MinIO bucket.
-           
+            // Upload the image to the MinIO bucket.
+            var bucketName = "images";
+            var objectName = $@"/housing/{Guid.NewGuid()}.jpg";
+            var args = new PutObjectArgs()
+                .WithBucket(bucketName)
+                .WithObject(objectName)
+                .WithContentType(contentType)
+                .WithObjectSize(image.Length)
+                .WithStreamData(stream);
+            await _minioClient.PutObjectAsync(args);
+
+            var urlArgs = new PresignedGetObjectArgs().WithObject(objectName).WithBucket(bucketName).WithExpiry(60 * 60 * 24 * 7);
+            var url = await _minioClient.PresignedGetObjectAsync(urlArgs);
+            return new UploadResult { Bucket = bucketName, ObjectName = objectName, Url = url };
         }
     }
+
+    public struct UploadResult
+    {
+        public string Url;
+        public string ObjectName;
+        public string Bucket;
+    }
+
 }
