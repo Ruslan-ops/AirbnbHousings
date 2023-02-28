@@ -42,34 +42,21 @@ namespace AirbnbHousings.Controllers
         public async Task<IActionResult> UploadImage(IFormCollection collection)
         {
             IFormFile image = collection.Files.First();
-            var housingIdStr = collection["housingId"];
-            int housingId;
-            try
-            {
-                housingId = Convert.ToInt32(housingIdStr);
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            if (image == null)
-            {
-                return BadRequest("No image file found");
-            }
+            var validateError = ValidateInt(collection["housingId"], out var housingId);
+            if (image == null){ return BadRequest("No image file found"); }
+            if (validateError is not null) { return validateError; }
 
-
-            // Get the image stream and metadata.
             var uploadResult = await _minioService.UploadImageAsync(image);
             await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(uploadResult));
             await _postgresService.AddHousingImageAsync(housingId, uploadResult.ObjectName, uploadResult.Url);
             return Ok();
-            //return new Ok("Image uploaded successfully");
         }
 
         [HttpDelete("image/delete")]
         public async Task<IActionResult> DeleteImage(string imageId)
         {
-            var imageIdInt = Convert.ToInt32(imageId);
+            var validateResult = ValidateInt(imageId, out int imageIdInt);
+            if (validateResult is not null) return validateResult;
             var deletedImage = await _postgresService.DeleteHousingImageAsync(imageIdInt);
             await _minioService.DeleteImageAsync(deletedImage.Name);
             return Ok();
