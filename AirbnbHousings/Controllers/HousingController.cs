@@ -38,7 +38,7 @@ namespace AirbnbHousings.Controllers
         //    return Ok();
         //}
 
-        [HttpPost("upload")]
+        [HttpPost("image/new")]
         public async Task<IActionResult> UploadImage(IFormCollection collection)
         {
             IFormFile image = collection.Files.First();
@@ -66,7 +66,7 @@ namespace AirbnbHousings.Controllers
             //return new Ok("Image uploaded successfully");
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("image/delete")]
         public async Task<IActionResult> DeleteImage(string imageId)
         {
             var imageIdInt = Convert.ToInt32(imageId);
@@ -74,11 +74,37 @@ namespace AirbnbHousings.Controllers
             await _minioService.DeleteImageAsync(deletedImage.Name);
             return Ok();
         }
+
+        [HttpPost("new")]
+        public async Task<IActionResult> AddHousingAsync([FromBody]HousingCreateDto model)
+        {
+            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(model));
+            var h = await _postgresService.AddHousingAsync(model);
+            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(h));
+            return Ok();
+        }
+
+        private IActionResult ValidateInt(string numberStr, out int number)
+        {
+            number = 0;
+            try
+            {
+                number =  Convert.ToInt32(numberStr);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            return null;
+        }
     }
 
-    public struct UploadImageRequest
+    public class HousingCreateDto
     {
-        public IFormFile image;
-        public string housingId;
+        public string Description { get; set; }
+        public string Title { get; set; }
+        public int NightPrice { get; set; }
+        public string Address { get; set; }
     }
+
 }

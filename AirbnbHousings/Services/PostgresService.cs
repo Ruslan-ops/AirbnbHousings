@@ -1,4 +1,5 @@
-﻿using AirbnbHousings.Models;
+﻿using AirbnbHousings.Controllers;
+using AirbnbHousings.Models;
 using Microsoft.EntityFrameworkCore;
 using Minio;
 using Newtonsoft.Json;
@@ -27,16 +28,22 @@ namespace AirbnbHousings.Services
 
         public async Task AddHousingImageAsync(int housingId, string imageName, string url)
         {
+            using var tx = _airbnbContext.Database.BeginTransaction();
+
             var orderNumber = await GetLastOrderNumberForImageAsync(housingId);
-            var photoAddResult = _airbnbContext.Photos.Add(new Photo { CreatedDate = new DateTime(), Name = imageName, Url = url});
+            var photoAddResult = _airbnbContext.Photos.Add(new Photo { CreatedDate = new DateTime(), Name = imageName, Url = url });
             await _airbnbContext.SaveChangesAsync();
 
             await _airbnbContext.HousingPhotos.AddAsync(new HousingPhoto { HousingId = housingId, PhotoId = photoAddResult.Entity.PhotoId, OrderNumber = orderNumber });
             await _airbnbContext.SaveChangesAsync();
+
+            await tx.CommitAsync();
         }
 
         public async Task<Photo> DeleteHousingImageAsync(int imageId)
         {
+            using var tx = await _airbnbContext.Database.BeginTransactionAsync();
+
             var entities = await _airbnbContext.HousingPhotos.Where(hp => hp.PhotoId  == imageId).ToListAsync();
             _airbnbContext.HousingPhotos.RemoveRange(entities);
             await _airbnbContext.SaveChangesAsync();
@@ -45,13 +52,16 @@ namespace AirbnbHousings.Services
             _airbnbContext.Photos.Remove(image);
             await _airbnbContext.SaveChangesAsync();
             await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(image));
+
+            await tx.CommitAsync();
+
             return image;
         }
 
-        public async Task AddHousingAsync(HousingCreateDto model)
+        public async Task<Housing> AddHousingAsync(HousingCreateDto model)
         {
             var housing = new Housing { 
-                HousingId = model.HousingId, Description = model.Description, Title=model.Title, CurrentNightPrice = model.NightPrice,FullAddress = model.Address,
+                Description = model.Description, Title=model.Title, CurrentNightPrice = model.NightPrice,FullAddress = model.Address,
 
                 BathsAmount =1, CalendarId=1, CurrencyId=1, HasSeparateBath=true, HousingPartId=1, HousingSubtypeId=1, IsHidden=false, 
                 IsCompletelyForGuests=true, LandlordId=22, Latitude=1.1111, Longitude=2.324344, NightMaxPrice=model.NightPrice, NightMinPrice=model.NightPrice,
@@ -59,19 +69,13 @@ namespace AirbnbHousings.Services
                 MinBookingDays=1, PostIndex=3223242, StreetId=50
             };
 
-            _airbnbContext.Housings.Add(housing);
+            var h = _airbnbContext.Housings.Add(housing);
             await _airbnbContext.SaveChangesAsync();
+            return h.Entity;
         }
     }
 
 
-    public struct HousingCreateDto
-    {
-        public int HousingId;
-        public string Description;
-        public string Title;
-        public int NightPrice;
-        public string Address;
-    }
+    
 
 }
