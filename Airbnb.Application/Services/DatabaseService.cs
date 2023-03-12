@@ -43,15 +43,15 @@ namespace Airbnb.Application.Services
             await tx.CommitAsync();
         }
 
-        public async Task<Photo> DeleteHousingPhotoAsync(int imageId)
+        public async Task<Photo> DeleteHousingPhotoAsync(int photoId)
         {
             using var tx = await _airbnbContext.Database.BeginTransactionAsync();
-
-            var entities = await _airbnbContext.HousingPhotos.Where(hp => hp.PhotoId == imageId).ToListAsync();
+                
+            var entities = await _airbnbContext.HousingPhotos.AsNoTracking().Where(hp => hp.PhotoId == photoId).ToListAsync();
             _airbnbContext.HousingPhotos.RemoveRange(entities);
             await _airbnbContext.SaveChangesAsync();
 
-            var image = await _airbnbContext.Photos.FirstAsync(p => p.PhotoId == imageId);
+            var image = await _airbnbContext.Photos.AsNoTracking().FirstAsync(p => p.PhotoId == photoId);
             _airbnbContext.Photos.Remove(image);
             await _airbnbContext.SaveChangesAsync();
 

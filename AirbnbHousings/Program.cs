@@ -9,6 +9,8 @@ using Minio;
 using System.Reflection;
 using Airbnb.Application.Common.Options;
 using Airbnb.Application.Interfaces;
+using Microsoft.AspNetCore.Diagnostics;
+using AirbnbHousings.Middlewares;
 
 static MinioClient CreateClient(IServiceProvider provider)
 {
@@ -61,10 +63,13 @@ try
 
     var app = builder.Build();
 
+
+    app.UseCustomExceptionHandler();
+
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
-        app.UseDeveloperExceptionPage();
+        //app.UseDeveloperExceptionPage();
         app.UseSwagger();
         app.UseSwaggerUI();
     }

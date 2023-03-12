@@ -1,4 +1,5 @@
 ﻿using Airbnb.Application.Requests.HousingPhotos.Commands.CreateHousingPhoto;
+using Airbnb.Application.Requests.HousingPhotos.Commands.DeleteHousingPhoto;
 using AirbnbHousings.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -43,43 +44,42 @@ namespace AirbnbHousings.Controllers
         public async Task<IActionResult> UploadImage([FromForm] CreateHousingPhotoDto model, CancellationToken cancellationToken)
         {
             var command = _mapper.Map<CreateHousingPhotoCommand>(model);
-            command.UserId = 111;// this.UserId;
+            command.UserId = 1786;// this.UserId;
             await Mediator.Send(command, cancellationToken);
             return Ok();
         }
 
-    //    [HttpDelete("image/delete")]
-    //    public async Task<IActionResult> DeleteImage(string imageId)
-    //    {
-    //        var validateResult = ValidateInt(imageId, out int imageIdInt);
-    //        if (validateResult is not null) return validateResult;
-    //        var deletedImage = await _postgresService.DeleteHousingImageAsync(imageIdInt);
-    //        await _minioService.DeleteImageAsync(deletedImage.Name);
-    //        return Ok();
-    //    }
+        [HttpDelete("photo/delete")]
+        public async Task<IActionResult> DeleteImage([FromBody]DeleteHousingPhotoDto model, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<DeleteHousingPhotoCommand>(model);
+            command.UserId = 1786;// this.UserId;
+            await Mediator.Send(command, cancellationToken);
+            return Ok();
+        }
 
-    //    [HttpPost("new")]
-    //    public async Task<IActionResult> AddHousingAsync([FromBody]HousingCreateDto model)
-    //    {
-    //        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(model));
-    //        var h = await _postgresService.AddHousingAsync(model);
-    //        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(h));
-    //        return Ok();
-    //    }
+        //    [HttpPost("new")]
+        //    public async Task<IActionResult> AddHousingAsync([FromBody]HousingCreateDto model)
+        //    {
+        //        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(model));
+        //        var h = await _postgresService.AddHousingAsync(model);
+        //        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(h));
+        //        return Ok();
+        //    }
 
-    //    private IActionResult ValidateInt(string numberStr, out int number)
-    //    {
-    //        number = 0;
-    //        try
-    //        {
-    //            number =  Convert.ToInt32(numberStr);
-    //        }
-    //        catch(Exception ex)
-    //        {
-    //            return BadRequest(ex.Message);
-    //        }
-    //        return null;
-    //    }
+        //    private IActionResult ValidateInt(string numberStr, out int number)
+        //    {
+        //        number = 0;
+        //        try
+        //        {
+        //            number =  Convert.ToInt32(numberStr);
+        //        }
+        //        catch(Exception ex)
+        //        {
+        //            return BadRequest(ex.Message);
+        //        }
+        //        return null;
+        //    }
     }
 
     public class HousingCreateDto

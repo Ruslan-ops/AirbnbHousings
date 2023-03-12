@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Airbnb.Application.Requests.HousingPhotos.Commands.CreateHousingPhoto
 {
-    public class CreateHousingPhotoCommandHandler : IRequestHandler<CreateHousingPhotoCommand>
+    public class CreateHousingPhotoCommandHandler : IRequestHandler<CreateHousingPhotoCommand, Unit>
     {
         private readonly MinioService _minioService;
         private readonly DatabaseService _databaseService;
@@ -23,7 +23,7 @@ namespace Airbnb.Application.Requests.HousingPhotos.Commands.CreateHousingPhoto
             _validator = validator;
         }
 
-        public async Task Handle(CreateHousingPhotoCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateHousingPhotoCommand request, CancellationToken cancellationToken)
         {
             await Console.Out.WriteLineAsync($"********Handle: {JsonSerializer.Serialize(request)}");
             var valresult = await _validator.ValidateAsync( request );
@@ -38,6 +38,7 @@ namespace Airbnb.Application.Requests.HousingPhotos.Commands.CreateHousingPhoto
             var uploadResult = await _minioService.UploadPhotoAsync(request.Photo, MinioPhotoDir.Housing);
             await Console.Out.WriteLineAsync($"Upload result: {JsonSerializer.Serialize(uploadResult)}");
             await _databaseService.AddHousingPhotoAsync(request.HousingId!.Value, uploadResult.ObjectName, uploadResult.Url);
+            return Unit.Value;
         }
     }
 }
