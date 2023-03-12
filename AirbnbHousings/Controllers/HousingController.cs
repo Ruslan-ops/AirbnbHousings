@@ -1,4 +1,6 @@
-﻿using AirbnbHousings.Services;
+﻿using Airbnb.Application.Requests.HousingPhotos.Commands.CreateHousingPhoto;
+using AirbnbHousings.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Minio;
@@ -8,15 +10,14 @@ namespace AirbnbHousings.Controllers
 {
     [ApiController]
     [Route("housings")]
-    public class HousingController : Controller
+    public class HousingController : BaseController
     {
-        private readonly MinioService _minioService;
-        private readonly PostgresService _postgresService;
+        private readonly IMapper _mapper;
 
-        public HousingController(MinioService minioService, PostgresService postgresService)
+
+        public HousingController(IMapper mapper)
         {
-            _minioService = minioService;
-            _postgresService = postgresService;
+            _mapper = mapper;
         }
 
         [HttpGet("all")]
@@ -38,52 +39,47 @@ namespace AirbnbHousings.Controllers
         //    return Ok();
         //}
 
-        [HttpPost("image/new")]
-        public async Task<IActionResult> UploadImage(IFormCollection collection)
+        [HttpPost("photo/new")]
+        public async Task<IActionResult> UploadImage([FromForm] CreateHousingPhotoDto model, CancellationToken cancellationToken)
         {
-            IFormFile image = collection.Files.First();
-            var validateError = ValidateInt(collection["housingId"], out var housingId);
-            if (image == null){ return BadRequest("No image file found"); }
-            if (validateError is not null) { return validateError; }
-
-            var uploadResult = await _minioService.UploadImageAsync(image);
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(uploadResult));
-            await _postgresService.AddHousingImageAsync(housingId, uploadResult.ObjectName, uploadResult.Url);
+            var command = _mapper.Map<CreateHousingPhotoCommand>(model);
+            command.UserId = 111;// this.UserId;
+            await Mediator.Send(command, cancellationToken);
             return Ok();
         }
 
-        [HttpDelete("image/delete")]
-        public async Task<IActionResult> DeleteImage(string imageId)
-        {
-            var validateResult = ValidateInt(imageId, out int imageIdInt);
-            if (validateResult is not null) return validateResult;
-            var deletedImage = await _postgresService.DeleteHousingImageAsync(imageIdInt);
-            await _minioService.DeleteImageAsync(deletedImage.Name);
-            return Ok();
-        }
+    //    [HttpDelete("image/delete")]
+    //    public async Task<IActionResult> DeleteImage(string imageId)
+    //    {
+    //        var validateResult = ValidateInt(imageId, out int imageIdInt);
+    //        if (validateResult is not null) return validateResult;
+    //        var deletedImage = await _postgresService.DeleteHousingImageAsync(imageIdInt);
+    //        await _minioService.DeleteImageAsync(deletedImage.Name);
+    //        return Ok();
+    //    }
 
-        [HttpPost("new")]
-        public async Task<IActionResult> AddHousingAsync([FromBody]HousingCreateDto model)
-        {
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(model));
-            var h = await _postgresService.AddHousingAsync(model);
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(h));
-            return Ok();
-        }
+    //    [HttpPost("new")]
+    //    public async Task<IActionResult> AddHousingAsync([FromBody]HousingCreateDto model)
+    //    {
+    //        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(model));
+    //        var h = await _postgresService.AddHousingAsync(model);
+    //        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(h));
+    //        return Ok();
+    //    }
 
-        private IActionResult ValidateInt(string numberStr, out int number)
-        {
-            number = 0;
-            try
-            {
-                number =  Convert.ToInt32(numberStr);
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            return null;
-        }
+    //    private IActionResult ValidateInt(string numberStr, out int number)
+    //    {
+    //        number = 0;
+    //        try
+    //        {
+    //            number =  Convert.ToInt32(numberStr);
+    //        }
+    //        catch(Exception ex)
+    //        {
+    //            return BadRequest(ex.Message);
+    //        }
+    //        return null;
+    //    }
     }
 
     public class HousingCreateDto

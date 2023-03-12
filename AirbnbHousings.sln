@@ -5,6 +5,12 @@ VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AirbnbHousings", "AirbnbHousings\AirbnbHousings.csproj", "{17A25D25-D1A0-45E8-AD1A-0B1558B34880}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{7920BD91-A3D4-4E7D-9179-68AA46D0437D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airbnb.Application", "Airbnb.Application\Airbnb.Application.csproj", "{0AB868B4-852E-4A2A-85CA-609B63A103B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airbnb.Domain", "Airbnb.Domain\Airbnb.Domain.csproj", "{8E3A7542-C637-47AB-8401-86C44D472AA1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +21,21 @@ Global
 		{17A25D25-D1A0-45E8-AD1A-0B1558B34880}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17A25D25-D1A0-45E8-AD1A-0B1558B34880}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17A25D25-D1A0-45E8-AD1A-0B1558B34880}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AB868B4-852E-4A2A-85CA-609B63A103B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AB868B4-852E-4A2A-85CA-609B63A103B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AB868B4-852E-4A2A-85CA-609B63A103B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AB868B4-852E-4A2A-85CA-609B63A103B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E3A7542-C637-47AB-8401-86C44D472AA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E3A7542-C637-47AB-8401-86C44D472AA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E3A7542-C637-47AB-8401-86C44D472AA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E3A7542-C637-47AB-8401-86C44D472AA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0AB868B4-852E-4A2A-85CA-609B63A103B5} = {7920BD91-A3D4-4E7D-9179-68AA46D0437D}
+		{8E3A7542-C637-47AB-8401-86C44D472AA1} = {7920BD91-A3D4-4E7D-9179-68AA46D0437D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8EDC6570-E3A3-4232-A9AE-2746E0EEB02D}

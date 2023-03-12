@@ -1,8 +1,14 @@
+using Airbnb.Application;
+using Airbnb.Application.Services;
 using AirbnbHousings.Models;
-using AirbnbHousings.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Airbnb.Application.Common.Mappings;
 using Minio;
+using System.Reflection;
+using Airbnb.Application.Common.Options;
+using Airbnb.Application.Interfaces;
 
 static MinioClient CreateClient(IServiceProvider provider)
 {
@@ -20,16 +26,24 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     //Add services to the container.
+    var Configuration = builder.Configuration;
 
-   builder.Services.AddCors(options =>
-   {
+    builder.Services.AddAutoMapper(config =>
+    {
+        config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
+        config.AddProfile(new AssemblyMappingProfile(typeof(IJwtService).Assembly));
+    });
+    builder.Services.AddApplication();
+
+    builder.Services.AddCors(options =>
+    {
        options.AddPolicy("CorsPolicy", builder =>
        {
            builder.WithOrigins("http://localhost:3000")
                .AllowAnyHeader()
                .AllowAnyMethod();
        });
-   });
+    });
 
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -37,12 +51,13 @@ try
     builder.Services.AddSwaggerGen();
 
 
-
     builder.Services.AddScoped(CreateClient);
     builder.Services.AddScoped<MinioService>();
     builder.Services.AddDbContext<AirbnbContext>(options =>
-        options.UseNpgsql("Host=localhost;Port=5466;Database=airbnb;Username=postgres;Password=postgres"));
-    builder.Services.AddScoped<PostgresService>();
+        options.UseNpgsql("Host=localhost;Port=5477;Database=airbnb;Username=postgres;Password=postgres"));
+    builder.Services.AddScoped<DatabaseService>();
+
+    builder.Services.Configure<MinioOptions>(Configuration.GetSection("Minio"));
 
     var app = builder.Build();
 
