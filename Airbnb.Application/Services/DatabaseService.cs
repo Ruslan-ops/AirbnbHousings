@@ -20,10 +20,10 @@ namespace Airbnb.Application.Services
 
         private async Task<int> GetLastOrderNumberForPhotoAsync(int housingId)
         {
-            bool hasPhotos = await _airbnbContext.HousingPhotos.AnyAsync(hp => hp.HousingId == housingId);
+            bool hasPhotos = await _airbnbContext.HousingPhotos.AsNoTracking().AnyAsync(hp => hp.HousingId == housingId);
             if (hasPhotos)
             {
-                var maxOrderNumber = await _airbnbContext.HousingPhotos.AsQueryable().Where(hp => hp.HousingId == housingId).MaxAsync(hp => hp.OrderNumber);
+                var maxOrderNumber = await _airbnbContext.HousingPhotos.AsNoTracking().Where(hp => hp.HousingId == housingId).MaxAsync(hp => hp.OrderNumber);
                 return maxOrderNumber + 1;
             }
             return 1;
@@ -44,9 +44,7 @@ namespace Airbnb.Application.Services
         }
 
         public async Task<Photo> DeleteHousingPhotoAsync(int photoId)
-        {
-            using var tx = await _airbnbContext.Database.BeginTransactionAsync();
-                
+        {                
             var entities = await _airbnbContext.HousingPhotos.AsNoTracking().Where(hp => hp.PhotoId == photoId).ToListAsync();
             _airbnbContext.HousingPhotos.RemoveRange(entities);
             //await _airbnbContext.SaveChangesAsync();
@@ -54,8 +52,6 @@ namespace Airbnb.Application.Services
             var image = await _airbnbContext.Photos.AsNoTracking().FirstAsync(p => p.PhotoId == photoId);
             _airbnbContext.Photos.Remove(image);
             await _airbnbContext.SaveChangesAsync();
-
-            await tx.CommitAsync();
 
             return image;
         }
