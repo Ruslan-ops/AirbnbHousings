@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-namespace Airbnb.Application.Requests.Users.Commands.RegisterEmail
+namespace Airbnb.Application.Requests.Auth.Commands.RegisterEmail
 {
     public class RegisterEmailCommandHandler : IRequestHandler<RegisterEmailCommand, string>
     {

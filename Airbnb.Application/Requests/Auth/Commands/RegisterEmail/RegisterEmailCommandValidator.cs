@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Airbnb.Application.Requests.Users.Commands.RegisterEmail
+namespace Airbnb.Application.Requests.Auth.Commands.RegisterEmail
 {
     public class RegisterEmailCommandValidator : AbstractValidator<RegisterEmailCommand>
     {

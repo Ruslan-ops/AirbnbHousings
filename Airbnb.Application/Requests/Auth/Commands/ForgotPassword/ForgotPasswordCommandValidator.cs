@@ -5,15 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Airbnb.Application.Requests.Users.Commands.LoginEmail
+namespace Airbnb.Application.Requests.Auth.Commands.ForgotPassword
 {
-    public class LoginEmailCommandValidator : AbstractValidator<LoginEmailCommand>
+    public class ForgotPasswordCommandValidator : AbstractValidator<ForgotPasswordCommand>
     {
-        public LoginEmailCommandValidator() 
+        public ForgotPasswordCommandValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(command => command.Email).NotEmpty().EmailAddress();
-            RuleFor(command => command.Password).NotEmpty();
         }
     }
 }

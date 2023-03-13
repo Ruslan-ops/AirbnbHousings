@@ -1,6 +1,6 @@
 ﻿using Airbnb.Application.Common.Mappings;
-using Airbnb.Application.Requests.Users.Commands.RefreshPassword;
-using Airbnb.Application.Requests.Users.Commands.RegisterEmail;
+using Airbnb.Application.Requests.Auth.Commands.RefreshPassword;
+using Airbnb.Application.Requests.Auth.Commands.RegisterEmail;
 using AutoMapper;
 
 namespace AirbnbHousings.Models

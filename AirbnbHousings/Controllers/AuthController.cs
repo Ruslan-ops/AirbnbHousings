@@ -1,7 +1,7 @@
-﻿using Airbnb.Application.Requests.Users.Commands.ForgotPassword;
-using Airbnb.Application.Requests.Users.Commands.LoginEmail;
-using Airbnb.Application.Requests.Users.Commands.RefreshPassword;
-using Airbnb.Application.Requests.Users.Commands.RegisterEmail;
+﻿using Airbnb.Application.Requests.Auth.Commands.ForgotPassword;
+using Airbnb.Application.Requests.Auth.Commands.LoginEmail;
+using Airbnb.Application.Requests.Auth.Commands.RefreshPassword;
+using Airbnb.Application.Requests.Auth.Commands.RegisterEmail;
 using AirbnbHousings.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;

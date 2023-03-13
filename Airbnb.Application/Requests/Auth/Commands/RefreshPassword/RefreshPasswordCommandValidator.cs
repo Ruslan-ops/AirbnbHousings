@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Airbnb.Application.Requests.Users.Commands.RefreshPassword
+namespace Airbnb.Application.Requests.Auth.Commands.RefreshPassword
 {
     public class RefreshPasswordCommandValidator : AbstractValidator<RefreshPasswordCommand>
     {

@@ -99,6 +99,7 @@ try
 
 
     app.UseCustomExceptionHandler();
+    app.UseHttpsRedirection();
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
@@ -108,9 +109,11 @@ try
         app.UseSwaggerUI();
     }
 
+
+    app.UseRouting();
+
     app.UseCors("CorsPolicy");
 
-    //app.UseHttpsRedirection();
 
     app.UseAuthentication();
     app.UseAuthorization();
