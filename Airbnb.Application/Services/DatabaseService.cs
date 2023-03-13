@@ -49,7 +49,7 @@ namespace Airbnb.Application.Services
                 
             var entities = await _airbnbContext.HousingPhotos.AsNoTracking().Where(hp => hp.PhotoId == photoId).ToListAsync();
             _airbnbContext.HousingPhotos.RemoveRange(entities);
-            await _airbnbContext.SaveChangesAsync();
+            //await _airbnbContext.SaveChangesAsync();
 
             var image = await _airbnbContext.Photos.AsNoTracking().FirstAsync(p => p.PhotoId == photoId);
             _airbnbContext.Photos.Remove(image);
