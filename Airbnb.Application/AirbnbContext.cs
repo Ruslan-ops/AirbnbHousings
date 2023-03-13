@@ -1216,6 +1216,9 @@ public partial class AirbnbContext : DbContext
             entity.Property(e => e.MiddleName)
                 .HasMaxLength(50)
                 .HasColumnName("middle_name");
+            entity.Property(e => e.NormEmail)
+                .HasMaxLength(100)
+                .HasColumnName("norm_email");
             entity.Property(e => e.PasswordChanged)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("password_changed");

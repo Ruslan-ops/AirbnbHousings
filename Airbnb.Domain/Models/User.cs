@@ -49,6 +49,8 @@ public partial class User
 
     public DateTime? PasswordChanged { get; set; }
 
+    public string? NormEmail { get; set; }
+
     public virtual ICollection<Book> Books { get; } = new List<Book>();
 
     public virtual ICollection<GuestRating> GuestRatingAuthors { get; } = new List<GuestRating>();
