@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -20,6 +21,7 @@ namespace Airbnb.Application.Common.Options
 
         public void Configure(JwtBearerOptions options)
         {
+            Console.WriteLine($"^^^^^^ SECRET KEY: {_jwtOptions.SigningSecretKey}");
             options.TokenValidationParameters = new()
             {
                 ValidateIssuer = true,
@@ -30,8 +32,9 @@ namespace Airbnb.Application.Common.Options
                 ValidAudience = _jwtOptions.Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_jwtOptions.SigningSecretKey)),
-                TokenDecryptionKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(_jwtOptions.EncryptionSecretKey))
+                //TokenDecryptionKey = new SymmetricSecurityKey(
+                //    Encoding.UTF8.GetBytes(_jwtOptions.EncryptionSecretKey)),
+                //ClockSkew = TimeSpan.FromMinutes(0),
             };
         }
     }

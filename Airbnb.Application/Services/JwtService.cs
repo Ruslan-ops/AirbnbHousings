@@ -1,6 +1,7 @@
 ﻿using Airbnb.Application.Common.Options;
 using Airbnb.Application.Interfaces;
 using Airbnb.Domain.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Airbnb.Application.Services
@@ -30,9 +32,11 @@ namespace Airbnb.Application.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
             };
-            var roleClaims = userRoles.Select(r => new Claim(ClaimTypes.Role, r.EnglishName));
-            claims.AddRange(roleClaims);
-
+            if (userRoles != null)
+            {
+                var roleClaims = userRoles.Select(r => new Claim(ClaimTypes.Role, r.EnglishName));
+                claims.AddRange(roleClaims);
+            }
             var signingCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_jwtOptions.SigningSecretKey)),
@@ -45,19 +49,30 @@ namespace Airbnb.Application.Services
                 SecurityAlgorithms.Aes128CbcHmacSha256);
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateJwtSecurityToken(
+
+
+            try
+            {
+                var token = tokenHandler.CreateJwtSecurityToken(
                 _jwtOptions.Issuer,
                 _jwtOptions.Audience,
                 new ClaimsIdentity(claims),
                 null,
                 DateTime.UtcNow.AddDays(1),
-                DateTime.UtcNow,
+                null,
                 signingCredentials,
                 encryptingCredentials
                 );
+                string tokenValue = tokenHandler.WriteToken(token);
+                return tokenValue;
+            }
+            catch( Exception ex )
+            {
+                Console.WriteLine(JsonSerializer.Serialize(ex));
+            }
 
-            string tokenValue = tokenHandler.WriteToken(token);
-            return tokenValue;
+            return "";
+            
         }
 
         public string GenerateRandomToken()

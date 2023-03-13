@@ -2,6 +2,7 @@
 using Airbnb.Application.Requests.HousingPhotos.Commands.DeleteHousingPhoto;
 using AirbnbHousings.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Minio;
@@ -9,8 +10,9 @@ using Newtonsoft.Json;
 
 namespace AirbnbHousings.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("housings")]
+    [Route("housing")]
     public class HousingController : BaseController
     {
         private readonly IMapper _mapper;
@@ -44,7 +46,7 @@ namespace AirbnbHousings.Controllers
         public async Task<IActionResult> UploadImage([FromForm] CreateHousingPhotoDto model, CancellationToken cancellationToken)
         {
             var command = _mapper.Map<CreateHousingPhotoCommand>(model);
-            command.UserId = 1786;// this.UserId;
+            command.UserId = this.UserId;
             await Mediator.Send(command, cancellationToken);
             return Ok();
         }
@@ -53,7 +55,7 @@ namespace AirbnbHousings.Controllers
         public async Task<IActionResult> DeleteImage([FromBody]DeleteHousingPhotoDto model, CancellationToken cancellationToken)
         {
             var command = _mapper.Map<DeleteHousingPhotoCommand>(model);
-            command.UserId = 1786;// this.UserId;
+            command.UserId = this.UserId;
             await Mediator.Send(command, cancellationToken);
             return Ok();
         }

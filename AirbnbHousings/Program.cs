@@ -12,6 +12,9 @@ using Airbnb.Application.Interfaces;
 using Microsoft.AspNetCore.Diagnostics;
 using AirbnbHousings.Middlewares;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 static MinioClient CreateClient(IServiceProvider provider)
 {
@@ -27,7 +30,7 @@ try
 
 
     var builder = WebApplication.CreateBuilder(args);
-
+    IdentityModelEventSource.ShowPII = true;
     //Add services to the container.
     var Configuration = builder.Configuration;
 
@@ -60,9 +63,37 @@ try
         options.UseNpgsql("Host=localhost;Port=5477;Database=airbnb;Username=postgres;Password=postgres"));
     builder.Services.AddScoped<DatabaseService>();
 
+    
+
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+        .AddJwtBearer(options =>
+        {
+            var jwtOpts = Configuration
+                .GetSection("Jwt")
+                .Get<JwtOptions>()!;
+            options.TokenValidationParameters = new()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtOpts.Issuer,
+                ValidAudience = jwtOpts.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(jwtOpts.SigningSecretKey)),
+                TokenDecryptionKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(jwtOpts.EncryptionSecretKey)),
+                ClockSkew = TimeSpan.FromMinutes(0),
+            };
+        });
+
     builder.Services.Configure<MinioOptions>(Configuration.GetSection("Minio"));
     builder.Services.Configure<JwtOptions>(Configuration.GetSection("Jwt"));
-    builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+    //builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
     var app = builder.Build();
 

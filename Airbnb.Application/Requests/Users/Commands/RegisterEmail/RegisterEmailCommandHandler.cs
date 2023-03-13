@@ -1,8 +1,11 @@
 ﻿using Airbnb.Application.Interfaces;
+using Airbnb.Application.Services;
 using Airbnb.Domain.Models;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -27,10 +30,12 @@ namespace Airbnb.Application.Requests.Users.Commands.RegisterEmail
 
         public async Task<string> Handle(RegisterEmailCommand command, CancellationToken cancellationToken)
         {
-            
-
+            await CheckEmailExists(command.Email);
             var commonRoleIds = new int[] { 0, 1, 3 };
             var defaultRoles = await _dbContext.Roles.AsNoTracking().Where(r => commonRoleIds.Contains(r.RoleId)).ToArrayAsync();
+
+            var hashed = BCrypt.Net.BCrypt.HashPassword(command.Password);
+            var matches = BCrypt.Net.BCrypt.Verify(command.Password, hashed);
 
             var user = new User
             {
@@ -38,11 +43,12 @@ namespace Airbnb.Application.Requests.Users.Commands.RegisterEmail
                 StreetId = 100,
                 BornDate = command.BornDate,
                 Email = command.Email,
+                NormEmail = command.Email.ToUpper(),
                 EmailVerificationToken = _jwtService.GenerateRandomToken(),
                 FirstName = command.FirstName,
                 SecondName = command.SecondName,
                 MiddleName = command.MiddleName,
-                HashedPassword = BCrypt.Net.BCrypt.HashPassword(command.Password),
+                HashedPassword = hashed,
                 ReceiveNews = command.RecieveNews,
             };
 
@@ -55,7 +61,7 @@ namespace Airbnb.Application.Requests.Users.Commands.RegisterEmail
 
             await tx.CommitAsync(cancellationToken);
 
-           var token =  _jwtService.Generate(entity.Entity, defaultRoles);
+            var token =  _jwtService.Generate(entity.Entity, defaultRoles);
 
             return token;
         }
@@ -63,9 +69,9 @@ namespace Airbnb.Application.Requests.Users.Commands.RegisterEmail
         private async Task CheckEmailExists(string email)
         {
             var normEmail = email.ToUpper();
-            var exists = await _dbContext.Users.AsNoTracking().AnyAsync(u => u.Email != null && u.Email.ToUpper() == normEmail);
+            var exists = await _dbContext.Users.AsNoTracking().AnyAsync(u => u.Email != null && u.NormEmail == normEmail);
             if (exists)
-                throw new ValidationException("a user with the same email already exists");
+                throw new ValidationException(new ValidationFailure[] { new ValidationFailure("Email", "a user with the same email already exists") });
         }
 
         private int? ConvertSexId(string sex)

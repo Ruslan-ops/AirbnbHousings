@@ -1,4 +1,6 @@
 ﻿using Airbnb.Application.Common.Behaviors;
+using Airbnb.Application.Interfaces;
+using Airbnb.Application.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +24,7 @@ namespace Airbnb.Application
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddScoped<IJwtService, JwtService>();
 
             return services;
         }

@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Text.Json;
 using FluentValidation;
 using ValidationException = FluentValidation.ValidationException;
 
@@ -37,11 +37,11 @@ namespace AirbnbHousings.Middlewares
             {
                 case ValidationException validationEx:
                     code = HttpStatusCode.BadRequest;
-                    result = JsonConvert.SerializeObject(new { errors = validationEx.Errors.Select(e => e.ErrorMessage) });
+                    result = JsonSerializer.Serialize(new { errors = validationEx.Errors.Select(e => e.ErrorMessage), message = validationEx.Message });
                     break;
                 default: 
                     code = HttpStatusCode.InternalServerError;
-                    result = String.Empty;
+                    result = JsonSerializer.Serialize(ex); //String.Empty;
                     break;
                 //case EntityNotFoundException notFoundEx:
                 //    code = HttpStatusCode.NotFound;
