@@ -26,28 +26,17 @@ namespace Airbnb.Application.Requests.Auth.Commands.RegisterEmail
             RuleFor(command => command.BornDate).NotEmpty().InclusiveBetween(minDate, DateOnly.FromDateTime(DateTime.Today)).WithMessage("Invalid borndate.");
 
             RuleFor(command => command.Password).Password();
-
-            //var minLen = 8;
-            //var maxLen = 16;
-
-            //RuleFor(command => command.Password).NotEmpty().WithMessage("Your password cannot be empty.")
-            //        .MinimumLength(minLen).WithMessage($"Your password length must be at least {minLen}.")
-            //        .MaximumLength(maxLen).WithMessage($"Your password length must not exceed {maxLen}.")
-            //        .Matches(@"[A-Z]+").WithMessage("Your password must contain at least one uppercase letter.")
-            //        .Matches(@"[a-z]+").WithMessage("Your password must contain at least one lowercase letter.")
-            //        .Matches(@"[0-9]+").WithMessage("Your password must contain at least one number.")
-            //        .Matches(@"[\!\?\*\#\.\&\%\-]+").WithMessage("Your password must contain at least one ( ! ? * # . & % - ).");
         }
 
 
-        private void CheckSex(string sex, ValidationContext<RegisterEmailCommand> context)
+        private void CheckSex(int? sex, ValidationContext<RegisterEmailCommand> context)
         {
             if (sex == null)
                 return;
 
-            if (sex == "m" || sex == "f")
+            if (sex >= 0 &&  sex <= 1)
                 return;
-            context.AddFailure("sex must be in { null, 'f', 'm' }");
+            context.AddFailure("sex must be in { null, 0, 1 }");
         }
     }
 }

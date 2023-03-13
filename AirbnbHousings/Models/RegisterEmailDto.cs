@@ -14,7 +14,7 @@ namespace AirbnbHousings.Models
         public string Password { get; set; }
         public bool RecieveNews { get; set; }
         public DateTime BornDate { get; set; }
-        public string Sex { get; set; }
+        public int? Sex { get; set; }
 
         public void Mapping(Profile profile)
         {

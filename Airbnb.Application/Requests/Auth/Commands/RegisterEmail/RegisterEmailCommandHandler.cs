@@ -38,7 +38,7 @@ namespace Airbnb.Application.Requests.Auth.Commands.RegisterEmail
 
             var user = new User
             {
-                SexId = ConvertSexId(command.Sex),
+                SexId = command.Sex,
                 StreetId = 100,
                 BornDate = command.BornDate,
                 Email = command.Email,
@@ -73,17 +73,17 @@ namespace Airbnb.Application.Requests.Auth.Commands.RegisterEmail
                 throw new ValidationException(new ValidationFailure[] { new ValidationFailure("Email", "a user with the same email already exists") });
         }
 
-        private int? ConvertSexId(string sex)
-        {
-            switch (sex)
-            {
-                case "m":
-                    return 0;
-                case "f":
-                    return 1;
-                default:
-                    return null;
-            }
-        }
+        //private int? ConvertSexId(string sex)
+        //{
+        //    switch (sex)
+        //    {
+        //        case "m":
+        //            return 0;
+        //        case "f":
+        //            return 1;
+        //        default:
+        //            return null;
+        //    }
+        //}
     }
 }

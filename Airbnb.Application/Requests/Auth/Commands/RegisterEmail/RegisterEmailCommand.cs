@@ -16,7 +16,7 @@ namespace Airbnb.Application.Requests.Auth.Commands.RegisterEmail
         public string Password { get; set;}
         public bool RecieveNews { get; set; }
         public DateOnly BornDate { get; set; }
-        public string Sex { get; set; }
+        public int? Sex { get; set; }
 
     }
 }

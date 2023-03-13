@@ -13,7 +13,7 @@ namespace Airbnb.Application.Requests.Users.Commands.UpdateUser
         public string SecondName { get; set; }
         public string? MiddleName { get; set; }
         public DateOnly BornDate { get; set; }
-        public string Sex { get; set; }
+        public int? Sex { get; set; }
         public bool RecieveNews { get; set; }
         public string? Description { get; set; }
     }
