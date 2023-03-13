@@ -11,6 +11,7 @@ using Airbnb.Application.Common.Options;
 using Airbnb.Application.Interfaces;
 using Microsoft.AspNetCore.Diagnostics;
 using AirbnbHousings.Middlewares;
+using Microsoft.Extensions.Options;
 
 static MinioClient CreateClient(IServiceProvider provider)
 {
@@ -60,6 +61,8 @@ try
     builder.Services.AddScoped<DatabaseService>();
 
     builder.Services.Configure<MinioOptions>(Configuration.GetSection("Minio"));
+    builder.Services.Configure<JwtOptions>(Configuration.GetSection("Jwt"));
+    builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
     var app = builder.Build();
 
@@ -78,7 +81,8 @@ try
 
     //app.UseHttpsRedirection();
 
-    //app.UseAuthorization();
+    app.UseAuthentication();
+    app.UseAuthorization();
 
     app.MapControllers();
 

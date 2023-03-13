@@ -29,12 +29,12 @@ namespace Airbnb.Application.Services
             return 1;
         }
 
-        public async Task AddHousingPhotoAsync(int housingId, string photoName, string url)
+        public async Task AddHousingPhotoAsync(int housingId, Photo photo)
         {
             using var tx = _airbnbContext.Database.BeginTransaction();
 
             var orderNumber = await GetLastOrderNumberForPhotoAsync(housingId);
-            var photoAddResult = _airbnbContext.Photos.Add(new Photo { CreatedDate = new DateTime(), Name = photoName, Url = url });
+            var photoAddResult = _airbnbContext.Photos.Add(photo);
             await _airbnbContext.SaveChangesAsync();
 
             await _airbnbContext.HousingPhotos.AddAsync(new HousingPhoto { HousingId = housingId, PhotoId = photoAddResult.Entity.PhotoId, OrderNumber = orderNumber });

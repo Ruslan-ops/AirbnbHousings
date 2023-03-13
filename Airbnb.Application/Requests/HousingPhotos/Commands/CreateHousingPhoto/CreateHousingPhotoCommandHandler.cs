@@ -1,4 +1,5 @@
 ﻿using Airbnb.Application.Services;
+using Airbnb.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -14,30 +15,18 @@ namespace Airbnb.Application.Requests.HousingPhotos.Commands.CreateHousingPhoto
     {
         private readonly MinioService _minioService;
         private readonly DatabaseService _databaseService;
-        private readonly CreateHousingPhotoCommandValidator _validator;
 
-        public CreateHousingPhotoCommandHandler(MinioService minioService, DatabaseService databaseService, CreateHousingPhotoCommandValidator validator)
+        public CreateHousingPhotoCommandHandler(MinioService minioService, DatabaseService databaseService)
         {
             _minioService = minioService;
             _databaseService = databaseService;
-            _validator = validator;
         }
 
         public async Task<Unit> Handle(CreateHousingPhotoCommand request, CancellationToken cancellationToken)
         {
-            await Console.Out.WriteLineAsync($"********Handle: {JsonSerializer.Serialize(request)}");
-            var valresult = await _validator.ValidateAsync( request );
-            if (!valresult.IsValid)
-            {
-                await Console.Out.WriteLineAsync("$$$$ FAILERS");
-                foreach (var failure in valresult.Errors)
-                {
-                    await Console.Out.WriteLineAsync("Property " + failure.PropertyName + " failed validation. Error was: " + failure.ErrorMessage);
-                }
-            }
             var uploadResult = await _minioService.UploadPhotoAsync(request.Photo, MinioPhotoDir.Housing);
-            await Console.Out.WriteLineAsync($"Upload result: {JsonSerializer.Serialize(uploadResult)}");
-            await _databaseService.AddHousingPhotoAsync(request.HousingId!.Value, uploadResult.ObjectName, uploadResult.Url);
+            var photo = new Photo { Name = uploadResult.ObjectName, Url = uploadResult.Url };
+            await _databaseService.AddHousingPhotoAsync(request.HousingId!.Value, photo);
             return Unit.Value;
         }
     }
