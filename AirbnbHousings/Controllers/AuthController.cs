@@ -1,5 +1,6 @@
 ﻿using Airbnb.Application.Requests.Users.Commands.ForgotPassword;
 using Airbnb.Application.Requests.Users.Commands.LoginEmail;
+using Airbnb.Application.Requests.Users.Commands.RefreshPassword;
 using Airbnb.Application.Requests.Users.Commands.RegisterEmail;
 using AirbnbHousings.Models;
 using AutoMapper;
@@ -47,7 +48,14 @@ namespace AirbnbHousings.Controllers
             return Ok(token);
         }
 
-        
+        [AllowAnonymous]
+        [HttpPost("refresh-password")]
+        public async Task<ActionResult> RefreshPassword([FromForm] RefreshPasswordDto model, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<RefreshPasswordCommand>(model);
+            await Mediator.Send(command, cancellationToken);
+            return Ok();
+        }
 
     }
 }

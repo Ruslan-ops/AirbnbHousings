@@ -1,4 +1,5 @@
-﻿using Airbnb.Domain.Models;
+﻿using Airbnb.Application.Common.Validators;
+using Airbnb.Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -24,16 +25,18 @@ namespace Airbnb.Application.Requests.Users.Commands.RegisterEmail
             DateOnly minDate = DateOnly.FromDateTime(new DateTime(1900, 1, 1));
             RuleFor(command => command.BornDate).NotEmpty().InclusiveBetween(minDate, DateOnly.FromDateTime(DateTime.Today)).WithMessage("Invalid borndate.");
 
-            var minLen = 8;
-            var maxLen = 16;
+            RuleFor(command => command.Password).Password();
 
-            RuleFor(command => command.Password).NotEmpty().WithMessage("Your password cannot be empty.")
-                    .MinimumLength(minLen).WithMessage($"Your password length must be at least {minLen}.")
-                    .MaximumLength(maxLen).WithMessage($"Your password length must not exceed {maxLen}.")
-                    .Matches(@"[A-Z]+").WithMessage("Your password must contain at least one uppercase letter.")
-                    .Matches(@"[a-z]+").WithMessage("Your password must contain at least one lowercase letter.")
-                    .Matches(@"[0-9]+").WithMessage("Your password must contain at least one number.")
-                    .Matches(@"[\!\?\*\#\.\&\%\-]+").WithMessage("Your password must contain at least one ( ! ? * # . & % - ).");
+            //var minLen = 8;
+            //var maxLen = 16;
+
+            //RuleFor(command => command.Password).NotEmpty().WithMessage("Your password cannot be empty.")
+            //        .MinimumLength(minLen).WithMessage($"Your password length must be at least {minLen}.")
+            //        .MaximumLength(maxLen).WithMessage($"Your password length must not exceed {maxLen}.")
+            //        .Matches(@"[A-Z]+").WithMessage("Your password must contain at least one uppercase letter.")
+            //        .Matches(@"[a-z]+").WithMessage("Your password must contain at least one lowercase letter.")
+            //        .Matches(@"[0-9]+").WithMessage("Your password must contain at least one number.")
+            //        .Matches(@"[\!\?\*\#\.\&\%\-]+").WithMessage("Your password must contain at least one ( ! ? * # . & % - ).");
         }
 
 

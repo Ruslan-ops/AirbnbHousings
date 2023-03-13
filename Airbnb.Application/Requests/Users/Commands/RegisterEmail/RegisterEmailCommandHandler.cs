@@ -35,7 +35,6 @@ namespace Airbnb.Application.Requests.Users.Commands.RegisterEmail
             var defaultRoles = await _dbContext.Roles.AsNoTracking().Where(r => commonRoleIds.Contains(r.RoleId)).ToArrayAsync();
 
             var hashed = BCrypt.Net.BCrypt.HashPassword(command.Password);
-            var matches = BCrypt.Net.BCrypt.Verify(command.Password, hashed);
 
             var user = new User
             {
