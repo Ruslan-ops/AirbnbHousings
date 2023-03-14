@@ -12,5 +12,11 @@ namespace Airbnb.Application.Requests.Users.Commands.AddUserPhoto
     {
         public int? UserId { get; set; }
         public List<IFormFile> Photos { get; set; }
+        
+        public AddUserPhotoCommand()
+        {
+            Photos = new List<IFormFile>();
+            Photos.First();
+        }
     }
 }
