@@ -9,7 +9,10 @@ namespace Airbnb.Application.Common.Consts
     internal class ErrorMessages
     {
         public const string UserNotOwnHousing = "The user doesn't own the housing";
+        public const string InvalidAuthentication = "Invalid authentication, please login again";
+        public const string EmailIsUsed = "User with the same email already exists";
 
         public static string HousingNotHasPhoto(int photoId) => $"The housing does't have the photo with id {photoId}";
+
     }
 }

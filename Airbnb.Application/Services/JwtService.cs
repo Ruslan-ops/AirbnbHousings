@@ -1,4 +1,5 @@
-﻿using Airbnb.Application.Common.Options;
+﻿using Airbnb.Application.Common.Consts;
+using Airbnb.Application.Common.Options;
 using Airbnb.Application.Interfaces;
 using Airbnb.Domain.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -31,6 +32,7 @@ namespace Airbnb.Application.Services
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
+                new Claim(ClaimNames.EmailConfirmed, user.IsEmailConfirmed.ToString()),
             };
             if (userRoles != null)
             {

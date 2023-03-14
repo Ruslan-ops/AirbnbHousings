@@ -14,5 +14,9 @@ namespace Airbnb.Application.Common.Exceptions
             : base(new ValidationFailure[] { new ValidationFailure { ErrorMessage = message } })
         { }
 
+        public CustomValidationException(string property, string message)
+            : base(new ValidationFailure[] { new ValidationFailure (property, message)})
+        { }
+
     }
 }

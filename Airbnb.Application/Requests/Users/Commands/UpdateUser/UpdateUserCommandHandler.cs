@@ -1,4 +1,5 @@
-﻿using Airbnb.Application.Common.Exceptions;
+﻿using Airbnb.Application.Common.Consts;
+using Airbnb.Application.Common.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
@@ -24,7 +25,7 @@ namespace Airbnb.Application.Requests.Users.Commands.UpdateUser
         {
             var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.UserId == request.UserId, cancellationToken);
             if (user == null)
-                throw new CustomValidationException("invalid authentication, please login again");
+                throw new CustomValidationException(ErrorMessages.InvalidAuthentication);
             
             user.ReceiveNews = request.RecieveNews;
             user.SexId = request.Sex;
