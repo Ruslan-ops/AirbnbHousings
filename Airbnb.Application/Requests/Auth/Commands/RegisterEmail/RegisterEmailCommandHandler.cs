@@ -32,7 +32,7 @@ namespace Airbnb.Application.Requests.Auth.Commands.RegisterEmail
         {
             await CheckEmailExists(command.Email);
             var commonRoleIds = new int[] { 0, 1, 3 };
-            var defaultRoles = await _dbContext.Roles.AsNoTracking().Where(r => commonRoleIds.Contains(r.RoleId)).ToArrayAsync();
+            var defaultRoles = await _dbContext.Roles.AsNoTracking().Where(r => commonRoleIds.Contains(r.RoleId)).ToArrayAsync(cancellationToken);
 
             var hashed = BCrypt.Net.BCrypt.HashPassword(command.Password);
 
@@ -54,9 +54,9 @@ namespace Airbnb.Application.Requests.Auth.Commands.RegisterEmail
             using var tx = _dbContext.Database.BeginTransaction();
             
             var entity = _dbContext.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
             _dbContext.UsersRoles.AddRange(defaultRoles.Select(r => new UsersRole { RoleId = r.RoleId, UserId = entity.Entity.UserId }));
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             await tx.CommitAsync(cancellationToken);
 
@@ -73,17 +73,5 @@ namespace Airbnb.Application.Requests.Auth.Commands.RegisterEmail
                 throw new ValidationException(new ValidationFailure[] { new ValidationFailure("Email", "a user with the same email already exists") });
         }
 
-        //private int? ConvertSexId(string sex)
-        //{
-        //    switch (sex)
-        //    {
-        //        case "m":
-        //            return 0;
-        //        case "f":
-        //            return 1;
-        //        default:
-        //            return null;
-        //    }
-        //}
     }
 }

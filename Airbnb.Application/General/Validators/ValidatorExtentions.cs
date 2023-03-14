@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Airbnb.Application.Common.Validators
+namespace Airbnb.Application.General.Validators
 {
     public static class ValidatorExtentions
     {
@@ -23,5 +23,6 @@ namespace Airbnb.Application.Common.Validators
                     .Matches(@"[0-9]+").WithMessage("Your password must contain at least one number.")
                     .Matches(@"[\!\?\*\#\.\&\%\-]+").WithMessage("Your password must contain at least one ( ! ? * # . & % - ).");
         }
+
     }
 }

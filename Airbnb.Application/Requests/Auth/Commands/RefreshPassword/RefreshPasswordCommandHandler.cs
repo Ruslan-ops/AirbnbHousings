@@ -22,7 +22,7 @@ namespace Airbnb.Application.Requests.Auth.Commands.RefreshPassword
 
         public async Task<Unit> Handle(RefreshPasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.RefreshPasswordToken != null && u.RefreshPasswordToken == request.Token);
+            var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.RefreshPasswordToken != null && u.RefreshPasswordToken == request.Token, cancellationToken);
             if (user != null) 
             {
                 var hashed = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
@@ -30,7 +30,7 @@ namespace Airbnb.Application.Requests.Auth.Commands.RefreshPassword
                 user.PasswordChanged = DateTime.Now;
                 user.RefreshPasswordToken = null;
                 _dbContext.Users.Update(user);
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync(cancellationToken);
                 return Unit.Value;
             }
             throw new ValidationException(new ValidationFailure[] { new ValidationFailure { ErrorMessage = "user with the token not found" } });

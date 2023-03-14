@@ -22,7 +22,7 @@ namespace Airbnb.Application.Requests.Auth.Commands.ConfirmEmail
 
         public async Task<Unit> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
         {
-            var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.EmailVerificationToken != null && u.EmailVerificationToken == request.Token);
+            var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.EmailVerificationToken != null && u.EmailVerificationToken == request.Token, cancellationToken);
             if (user != null)
             {
                 if (user.IsEmailConfirmed)
@@ -30,7 +30,7 @@ namespace Airbnb.Application.Requests.Auth.Commands.ConfirmEmail
                 
                 user.IsEmailConfirmed = true;
                 _dbContext.Users.Update(user);
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync(cancellationToken);
                 return Unit.Value;                
             }
             throw new ValidationException(new ValidationFailure[] { new ValidationFailure { ErrorMessage = "user with the token not found" } });

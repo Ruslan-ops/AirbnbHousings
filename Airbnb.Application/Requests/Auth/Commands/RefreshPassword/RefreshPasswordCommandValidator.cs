@@ -1,4 +1,4 @@
-﻿using Airbnb.Application.Common.Validators;
+﻿using Airbnb.Application.General.Validators;
 using FluentValidation;
 using System;
 using System.Collections.Generic;

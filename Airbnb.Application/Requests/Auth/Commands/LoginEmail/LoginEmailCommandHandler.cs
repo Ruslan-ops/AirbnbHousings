@@ -25,7 +25,7 @@ namespace Airbnb.Application.Requests.Auth.Commands.LoginEmail
         public async Task<string> Handle(LoginEmailCommand request, CancellationToken cancellationToken)
         {
             var normEmail = request.Email.ToUpper();
-            var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.NormEmail == normEmail);
+            var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.NormEmail == normEmail, cancellationToken);
             if (user != null)
             {
                 var isPasswordCorrect = BCrypt.Net.BCrypt.Verify(request.Password, user.HashedPassword);
@@ -35,7 +35,7 @@ namespace Airbnb.Application.Requests.Auth.Commands.LoginEmail
                         .Where(ur => ur.UserId == user.UserId)
                         .Include(ur => ur.Role)
                         .Select(ur => ur.Role)
-                        .ToArrayAsync();
+                        .ToArrayAsync(cancellationToken);
 
                     var token = _jwtService.Generate(user, roles);
                     return token;
