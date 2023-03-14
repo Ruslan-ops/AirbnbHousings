@@ -1,4 +1,5 @@
-﻿using Airbnb.Application.Requests.Users.Commands.UpdateUser;
+﻿using Airbnb.Application.Requests.Users.Commands.AddUserPhoto;
+using Airbnb.Application.Requests.Users.Commands.UpdateUser;
 using AirbnbHousings.Models;
 using AutoMapper;
 using IdentityModel.Client;
@@ -24,6 +25,15 @@ namespace AirbnbHousings.Controllers
             var command = _mapper.Map<UpdateUserCommand>(model);
             command.UserId = this.UserId;
             await Mediator.Send(command,cancellationToken);
+            return Ok();
+        }
+
+        [HttpPost("photo/new")]
+        public async Task<IActionResult> AddUserPhoto([FromForm] AddUserPhotoDto model, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<AddUserPhotoCommand>(model);
+            command.UserId = this.UserId;
+            await Mediator.Send(command, cancellationToken);
             return Ok();
         }
     }

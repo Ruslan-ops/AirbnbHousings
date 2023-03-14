@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,5 @@ namespace Airbnb.Application.General.Validators
                     .Matches(@"[0-9]+").WithMessage("Your password must contain at least one number.")
                     .Matches(@"[\!\?\*\#\.\&\%\-]+").WithMessage("Your password must contain at least one ( ! ? * # . & % - ).");
         }
-
     }
 }

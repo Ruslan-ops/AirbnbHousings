@@ -18,7 +18,7 @@ namespace Airbnb.Application.Services
         }
 
 
-        private async Task<int> GetLastOrderNumberForPhotoAsync(int housingId)
+        private async Task<int> GetLastOrderNumberForHousingPhotoAsync(int housingId)
         {
             bool hasPhotos = await _airbnbContext.HousingPhotos.AsNoTracking().AnyAsync(hp => hp.HousingId == housingId);
             if (hasPhotos)
@@ -29,18 +29,23 @@ namespace Airbnb.Application.Services
             return 1;
         }
 
+        private async Task<int> GetLastOrderNumberForUserPhotoAsync(int userId)
+        {
+            bool hasPhotos = await _airbnbContext.UsersPhotos.AsNoTracking().AnyAsync(up => up.UserId == userId);
+            if (hasPhotos)
+            {
+                var maxOrderNumber = await _airbnbContext.UsersPhotos.AsNoTracking().Where(up => up.UserId == userId).MaxAsync(up => up.OrderNum);
+                return maxOrderNumber + 1;
+            }
+            return 1;
+        }
+
         public async Task AddHousingPhotoAsync(int housingId, Photo photo)
         {
-            using var tx = _airbnbContext.Database.BeginTransaction();
-
-            var orderNumber = await GetLastOrderNumberForPhotoAsync(housingId);
+            var orderNumber = await GetLastOrderNumberForHousingPhotoAsync(housingId);
+            photo.HousingPhotos.Add(new HousingPhoto { OrderNumber = orderNumber, HousingId = housingId });
             var photoAddResult = _airbnbContext.Photos.Add(photo);
             await _airbnbContext.SaveChangesAsync();
-
-            await _airbnbContext.HousingPhotos.AddAsync(new HousingPhoto { HousingId = housingId, PhotoId = photoAddResult.Entity.PhotoId, OrderNumber = orderNumber });
-            await _airbnbContext.SaveChangesAsync();
-
-            await tx.CommitAsync();
         }
 
         public async Task<Photo> DeleteHousingPhotoAsync(int photoId)
@@ -58,16 +63,10 @@ namespace Airbnb.Application.Services
 
         public async Task AddUserPhotoAsync(int userId, Photo photo)
         {
-            using var tx = _airbnbContext.Database.BeginTransaction();
-
-            var orderNumber = await GetLastOrderNumberForPhotoAsync(housingId);
+            var orderNumber = await GetLastOrderNumberForUserPhotoAsync(userId);
+            photo.UsersPhotos.Add(new UsersPhoto { OrderNum = orderNumber, UserId = userId});
             var photoAddResult = _airbnbContext.Photos.Add(photo);
             await _airbnbContext.SaveChangesAsync();
-
-            await _airbnbContext.HousingPhotos.AddAsync(new HousingPhoto { HousingId = housingId, PhotoId = photoAddResult.Entity.PhotoId, OrderNumber = orderNumber });
-            await _airbnbContext.SaveChangesAsync();
-
-            await tx.CommitAsync();
         }
 
 

@@ -1,5 +1,7 @@
 ﻿using Airbnb.Application.Services;
+using Airbnb.Domain.Models;
 using MediatR;
+using Minio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +24,9 @@ namespace Airbnb.Application.Requests.Users.Commands.AddUserPhoto
         public async Task<Unit> Handle(AddUserPhotoCommand request, CancellationToken cancellationToken)
         {
             var uploadResult = await _minioService.UploadPhotoAsync(request.Photo, MinioPhotoDir.User);
-            _databaseService.
+            var photo = new Photo { Name = uploadResult.ObjectName, Url = uploadResult.Url };
+            await _databaseService.AddUserPhotoAsync(request.UserId!.Value, photo);
+            return Unit.Value;
         }
     }
 }
