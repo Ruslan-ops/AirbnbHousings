@@ -68,7 +68,8 @@ namespace Airbnb.Application.Services
 
     public enum MinioPhotoDir
     {
-        Housing = 1
+        Housing = 1,
+        User,
     }
 
 }

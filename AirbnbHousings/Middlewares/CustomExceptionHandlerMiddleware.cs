@@ -41,7 +41,7 @@ namespace AirbnbHousings.Middlewares
                     break;
                 default: 
                     code = HttpStatusCode.InternalServerError;
-                    result = JsonSerializer.Serialize(ex); //String.Empty;
+                    result = JsonSerializer.Serialize(ex.StackTrace); //String.Empty;
                     break;
                 //case EntityNotFoundException notFoundEx:
                 //    code = HttpStatusCode.NotFound;

@@ -15,9 +15,9 @@ namespace Airbnb.Application.General.Validators
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
 
-            RuleFor(command => command.FirstName).NotEmpty();
-            RuleFor(command => command.SecondName).NotEmpty();
-            RuleFor(command => command.MiddleName).NotEmpty().When(c => c.MiddleName != null);
+            RuleFor(command => command.FirstName).NotEmpty().MaximumLength(30);
+            RuleFor(command => command.SecondName).NotEmpty().MaximumLength(30);
+            RuleFor(command => command.MiddleName).MaximumLength(30);
             RuleFor(command => command.Sex).Custom(CheckSex);
 
             DateOnly minDate = DateOnly.FromDateTime(new DateTime(1900, 1, 1));
