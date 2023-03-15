@@ -54,7 +54,7 @@ namespace Airbnb.Application.Services
 
         public async Task<Photo> DeleteHousingPhotoAsync(int photoId, int housingId, CancellationToken cancellationToken)
         {
-            var photo = await _airbnbContext.Photos.FirstAsync(p => p.PhotoId == photoId, cancellationToken);
+            var photo = await _airbnbContext.Photos.AsNoTracking().FirstAsync(p => p.PhotoId == photoId, cancellationToken);
             _airbnbContext.Photos.Remove(photo);
             await _airbnbContext.SaveChangesAsync(cancellationToken);
             return photo;
@@ -80,7 +80,7 @@ namespace Airbnb.Application.Services
 
         public async Task<Photo> DeleteUserPhotoAsync(int photoId, CancellationToken cancellationToken)
         {
-            var photo = await _airbnbContext.Photos.FirstAsync(p => p.PhotoId == photoId, cancellationToken);
+            var photo = await _airbnbContext.Photos.AsNoTracking().FirstAsync(p => p.PhotoId == photoId, cancellationToken);
             _airbnbContext.Photos.Remove(photo);
             await _airbnbContext.SaveChangesAsync(cancellationToken);
             return photo;
