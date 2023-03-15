@@ -18,10 +18,8 @@ using System.Text;
 
 static MinioClient CreateClient(IServiceProvider provider)
 {
-    var endpoint = "localhost:9000";
-    var accessKey = "ROOTUSER";
-    var secretKey = "CHANGEME123";
-    var x = new MinioClient().WithEndpoint(endpoint).WithCredentials(accessKey, secretKey).Build();
+    var options = provider.GetRequiredService<IOptions<MinioOptions>>().Value;
+    var x = new MinioClient().WithEndpoint(options.Endpoint).WithCredentials(options.AccessKey, options.SecretKey).Build();
     return x;
 }
 
@@ -60,7 +58,7 @@ try
     builder.Services.AddScoped(CreateClient);
     builder.Services.AddScoped<MinioService>();
     builder.Services.AddDbContext<AirbnbContext>(options =>
-        options.UseNpgsql("Host=localhost;Port=5477;Database=airbnb;Username=postgres;Password=postgres"));
+        options.UseNpgsql(Configuration.GetValue<string>("PostgresConnectionString")));
     builder.Services.AddScoped<DatabaseService>();
 
     

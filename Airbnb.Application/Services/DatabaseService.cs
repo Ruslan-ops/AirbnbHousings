@@ -2,14 +2,7 @@
 using Airbnb.Application.Common.Exceptions;
 using Airbnb.Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
 
 namespace Airbnb.Application.Services
 {
