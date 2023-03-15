@@ -1,11 +1,15 @@
-﻿using Airbnb.Domain.Models;
+﻿using Airbnb.Application.Common.Consts;
+using Airbnb.Application.Common.Exceptions;
+using Airbnb.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Airbnb.Application.Services
 {
@@ -48,27 +52,44 @@ namespace Airbnb.Application.Services
             await _airbnbContext.SaveChangesAsync();
         }
 
-        public async Task<Photo> DeleteHousingPhotoAsync(int photoId)
-        {                
-            var entities = await _airbnbContext.HousingPhotos.AsNoTracking().Where(hp => hp.PhotoId == photoId).ToListAsync();
-            _airbnbContext.HousingPhotos.RemoveRange(entities);
-            //await _airbnbContext.SaveChangesAsync();
-
-            var image = await _airbnbContext.Photos.AsNoTracking().FirstAsync(p => p.PhotoId == photoId);
-            _airbnbContext.Photos.Remove(image);
-            await _airbnbContext.SaveChangesAsync();
-
-            return image;
+        public async Task<Photo> DeleteHousingPhotoAsync(int photoId, int housingId, CancellationToken cancellationToken)
+        {
+            var photo = await _airbnbContext.Photos.FirstAsync(p => p.PhotoId == photoId, cancellationToken);
+            _airbnbContext.Photos.Remove(photo);
+            await _airbnbContext.SaveChangesAsync(cancellationToken);
+            return photo;
         }
 
-        public async Task AddUserPhotoAsync(int userId, Photo photo)
+        public async Task<bool> UserOwnsHousing(int userId, int housingId, CancellationToken cancellationToken)
+        {
+            return await _airbnbContext.Housings.AsNoTracking().AnyAsync(h => h.LandlordId == userId, cancellationToken);
+        }
+
+        public async Task<bool> HousingHasPhoto(int housingId, int photoId, CancellationToken cancellationToken)
+        {
+            return await _airbnbContext.HousingPhotos.AsNoTracking().AnyAsync(hp => hp.HousingId == housingId && hp.PhotoId == photoId, cancellationToken);
+        }
+      
+        public async Task AddUserPhotoAsync(int userId, Photo photo, CancellationToken cancellationToken)
         {
             var orderNumber = await GetLastOrderNumberForUserPhotoAsync(userId);
             photo.UsersPhotos.Add(new UsersPhoto { OrderNum = orderNumber, UserId = userId});
             var photoAddResult = _airbnbContext.Photos.Add(photo);
-            await _airbnbContext.SaveChangesAsync();
+            await _airbnbContext.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task<Photo> DeleteUserPhotoAsync(int photoId, CancellationToken cancellationToken)
+        {
+            var photo = await _airbnbContext.Photos.FirstAsync(p => p.PhotoId == photoId, cancellationToken);
+            _airbnbContext.Photos.Remove(photo);
+            await _airbnbContext.SaveChangesAsync(cancellationToken);
+            return photo;
+        }
+
+        public async Task<bool> UserHasPhoto(int userId, int photoId, CancellationToken cancellationToken)
+        {
+            return await _airbnbContext.UsersPhotos.AsNoTracking().AnyAsync(up => up.UserId == userId && up.PhotoId == photoId, cancellationToken);
+        }
 
 
         //public async Task<Housing> AddHousingAsync(HousingCreateDto model)

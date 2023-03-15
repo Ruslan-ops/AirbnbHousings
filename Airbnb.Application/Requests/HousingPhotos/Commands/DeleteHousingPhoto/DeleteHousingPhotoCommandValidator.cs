@@ -13,39 +13,30 @@ namespace Airbnb.Application.Requests.HousingPhotos.Commands.DeleteHousingPhoto
 {
     public class DeleteHousingPhotoCommandValidator : AbstractValidator<DeleteHousingPhotoCommand>
     {
-        private readonly AirbnbContext _dbContext;
-        public DeleteHousingPhotoCommandValidator(AirbnbContext dbContext) 
+        private readonly DatabaseService _databaseService;
+        public DeleteHousingPhotoCommandValidator(DatabaseService databaseService) 
         {
-            _dbContext = dbContext;
+            _databaseService = databaseService;
             RuleLevelCascadeMode = CascadeMode.Stop;
             ClassLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command.HousingId).NotEmpty();
             RuleFor(command => command.UserId).NotEmpty();
             RuleFor(command => command.PhotoId).NotEmpty();
-
-            RuleFor(command => command).CustomAsync(CheckThatUserOwnsHousingPhoto);
+            RuleFor(command => command).CustomAsync(CheckUserOwnsHousing);
         }
 
-        private async Task CheckThatUserOwnsHousingPhoto(DeleteHousingPhotoCommand command, ValidationContext<DeleteHousingPhotoCommand> context, CancellationToken cancellationToken)
+        private async Task CheckUserOwnsHousing(DeleteHousingPhotoCommand command, ValidationContext<DeleteHousingPhotoCommand> context, CancellationToken cancellationToken)
         {
-            var isUserOwnsHousing = await _dbContext.Housings.AsNoTracking().AnyAsync(h => (h.HousingId == command.HousingId!.Value) && (h.LandlordId == command.UserId!.Value), cancellationToken);
-            if (isUserOwnsHousing)
-            {
-                var isHousingHasPhoto = await _dbContext.HousingPhotos.AsNoTracking().AnyAsync(h => (h.HousingId == command.HousingId!.Value) && (h.PhotoId == command.PhotoId!.Value));
-                if(isHousingHasPhoto)
-                {
-                    return;
-                }
-                else
-                {
-                    await Console.Out.WriteLineAsync("^^^^^^HousingNotHasPhoto");
-                    context.AddFailure(ErrorMessages.HousingNotHasPhoto(command.PhotoId!.Value));
-                }
-            }
-            else
+            if (! await _databaseService.UserOwnsHousing(command.UserId!.Value, command.HousingId!.Value, cancellationToken))
             {
                 context.AddFailure(ErrorMessages.UserNotOwnHousing);
+                return;
+            }
+            if (! await _databaseService.HousingHasPhoto(command.HousingId!.Value, command.PhotoId!.Value, cancellationToken))
+            {
+                context.AddFailure(ErrorMessages.HousingNotHasPhoto(command.PhotoId!.Value));
+                return;
             }
         }
     }

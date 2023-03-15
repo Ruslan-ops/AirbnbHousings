@@ -25,7 +25,7 @@ namespace Airbnb.Application.Requests.Users.Commands.AddUserPhoto
         {
             var uploadResult = await _minioService.UploadPhotoAsync(request.Photo, MinioPhotoDir.User);
             var photo = new Photo { Name = uploadResult.ObjectName, Url = uploadResult.Url };
-            await _databaseService.AddUserPhotoAsync(request.UserId!.Value, photo);
+            await _databaseService.AddUserPhotoAsync(request.UserId!.Value, photo, cancellationToken);
             return Unit.Value;
         }
     }

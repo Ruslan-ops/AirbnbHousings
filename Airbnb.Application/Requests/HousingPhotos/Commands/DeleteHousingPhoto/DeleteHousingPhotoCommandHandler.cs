@@ -22,7 +22,7 @@ namespace Airbnb.Application.Requests.HousingPhotos.Commands.DeleteHousingPhoto
 
         public async Task<Unit> Handle(DeleteHousingPhotoCommand request, CancellationToken cancellationToken)
         {
-            var deletedPhoto = await _databaseService.DeleteHousingPhotoAsync(request.PhotoId!.Value);
+            var deletedPhoto = await _databaseService.DeleteHousingPhotoAsync(request.PhotoId!.Value, request.HousingId!.Value, cancellationToken);
             await _minioService.DeletePhotoAsync(deletedPhoto.Name);
             return Unit.Value;
         }

@@ -1,5 +1,6 @@
 ﻿using Airbnb.Application.Requests.Users.Commands.AddUserPhoto;
 using Airbnb.Application.Requests.Users.Commands.ChangeEmail;
+using Airbnb.Application.Requests.Users.Commands.DeleteUserPhoto;
 using Airbnb.Application.Requests.Users.Commands.UpdateUser;
 using AirbnbHousings.Models;
 using AutoMapper;
@@ -33,6 +34,15 @@ namespace AirbnbHousings.Controllers
         public async Task<IActionResult> AddUserPhoto([FromForm] AddUserPhotoDto model, CancellationToken cancellationToken)
         {
             var command = _mapper.Map<AddUserPhotoCommand>(model);
+            command.UserId = this.UserId;
+            await Mediator.Send(command, cancellationToken);
+            return Ok();
+        }
+
+        [HttpDelete("photo/delete")]
+        public async Task<IActionResult> DeleteUserPhoto([FromBody] DeleteUserPhotoDto model, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<DeleteUserPhotoCommand>(model);
             command.UserId = this.UserId;
             await Mediator.Send(command, cancellationToken);
             return Ok();

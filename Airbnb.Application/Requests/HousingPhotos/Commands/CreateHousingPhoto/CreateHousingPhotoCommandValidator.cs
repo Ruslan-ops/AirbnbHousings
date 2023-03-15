@@ -12,26 +12,23 @@ namespace Airbnb.Application.Requests.HousingPhotos.Commands.CreateHousingPhoto
 {
     public class CreateHousingPhotoCommandValidator : AbstractValidator<CreateHousingPhotoCommand>
     {
-        private readonly AirbnbContext _dbContext;
-        public CreateHousingPhotoCommandValidator(AirbnbContext dbContext)
+        private readonly DatabaseService _databaseService;
+        public CreateHousingPhotoCommandValidator(DatabaseService databaseService)
         {
-            _dbContext = dbContext;
+            _databaseService = databaseService;
             RuleLevelCascadeMode = CascadeMode.Stop;
             ClassLevelCascadeMode = CascadeMode.Stop;
             RuleFor(command => command.Photo).NotEmpty();
             RuleFor(command => command.UserId).NotEmpty();
             RuleFor(command => command.HousingId).NotEmpty();
-            RuleFor(command => command).CustomAsync(CheckThatUserOwnsHousing);
+            RuleFor(command => command).CustomAsync(CheckUserOwnsHousing);
         }
 
-        private async Task CheckThatUserOwnsHousing(CreateHousingPhotoCommand command, ValidationContext<CreateHousingPhotoCommand> context, CancellationToken cancellationToken)
+        private async Task CheckUserOwnsHousing(CreateHousingPhotoCommand command, ValidationContext<CreateHousingPhotoCommand> context, CancellationToken cancellationToken)
         {
-            var instance = context.InstanceToValidate;
-            var isUserOwnsHousing = await _dbContext.Housings.AsNoTracking().AnyAsync(h => (h.HousingId == command.HousingId!.Value) && (h.LandlordId == command.UserId!.Value), cancellationToken);
-            if (!isUserOwnsHousing)
-            {
-                context.AddFailure(ErrorMessages.UserNotOwnHousing);
-            }
+            if (await _databaseService.UserOwnsHousing(command.UserId!.Value, command.HousingId!.Value, cancellationToken))
+                return;
+            context.AddFailure(ErrorMessages.UserNotOwnHousing);
         }
     }
 }
