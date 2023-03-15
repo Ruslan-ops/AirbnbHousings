@@ -51,14 +51,12 @@ namespace Airbnb.Application.Requests.Auth.Commands.RegisterEmail
                 ReceiveNews = command.RecieveNews,
             };
 
-            using var tx = _dbContext.Database.BeginTransaction();
-            
+            foreach (var role in defaultRoles)
+            {
+                user.UsersRoles.Add(new UsersRole { RoleId = role.RoleId });
+            }
             var entity = _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _dbContext.UsersRoles.AddRange(defaultRoles.Select(r => new UsersRole { RoleId = r.RoleId, UserId = entity.Entity.UserId }));
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            await tx.CommitAsync(cancellationToken);
 
             var token =  _jwtService.Generate(entity.Entity, defaultRoles);
 
