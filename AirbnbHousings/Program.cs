@@ -16,20 +16,11 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-static MinioClient CreateClient(IServiceProvider provider)
-{
-    var options = provider.GetRequiredService<IOptions<MinioOptions>>().Value;
-    var x = new MinioClient().WithEndpoint(options.Endpoint).WithCredentials(options.AccessKey, options.SecretKey).Build();
-    return x;
-}
 
 try
 {
-
-
     var builder = WebApplication.CreateBuilder(args);
     IdentityModelEventSource.ShowPII = true;
-    //Add services to the container.
     var Configuration = builder.Configuration;
 
     builder.Services.AddAutoMapper(config =>
@@ -50,7 +41,6 @@ try
     });
 
     builder.Services.AddControllers();
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
@@ -91,7 +81,6 @@ try
 
     builder.Services.Configure<MinioOptions>(Configuration.GetSection("Minio"));
     builder.Services.Configure<JwtOptions>(Configuration.GetSection("Jwt"));
-    //builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
     var app = builder.Build();
 
@@ -102,7 +91,6 @@ try
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
-        //app.UseDeveloperExceptionPage();
         app.UseSwagger();
         app.UseSwaggerUI();
     }
@@ -123,4 +111,11 @@ try
 catch (Exception e)
 {
     Console.WriteLine(e.Message);
+}
+
+static MinioClient CreateClient(IServiceProvider provider)
+{
+    var options = provider.GetRequiredService<IOptions<MinioOptions>>().Value;
+    var x = new MinioClient().WithEndpoint(options.Endpoint).WithCredentials(options.AccessKey, options.SecretKey).Build();
+    return x;
 }

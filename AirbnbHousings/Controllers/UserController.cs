@@ -2,11 +2,13 @@
 using Airbnb.Application.Requests.Users.Commands.ChangeEmail;
 using Airbnb.Application.Requests.Users.Commands.DeleteUserPhoto;
 using Airbnb.Application.Requests.Users.Commands.UpdateUser;
+using Airbnb.Application.Requests.Users.Queries.GetUser;
 using AirbnbHousings.Models;
 using AutoMapper;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace AirbnbHousings.Controllers
 {
@@ -55,6 +57,14 @@ namespace AirbnbHousings.Controllers
             command.UserId = this.UserId;
             await Mediator.Send(command, cancellationToken);
             return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpGet("show")]
+        public async Task<ActionResult<string>> GetUser(int? userId)
+        {
+            var vm = await Mediator.Send(new GetUserQuery { Userid = userId });
+            return Ok(JsonSerializer.Serialize(vm));
         }
     }
 }
