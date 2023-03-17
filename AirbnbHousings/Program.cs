@@ -1,6 +1,6 @@
 using Airbnb.Application;
 using Airbnb.Application.Services;
-using AirbnbHousings.Models;
+using Web.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -9,8 +9,7 @@ using Minio;
 using System.Reflection;
 using Airbnb.Application.Common.Options;
 using Airbnb.Application.Interfaces;
-using Microsoft.AspNetCore.Diagnostics;
-using AirbnbHousings.Middlewares;
+using Web.Middlewares;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;

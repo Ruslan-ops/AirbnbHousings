@@ -1,4 +1,4 @@
-namespace AirbnbHousings
+namespace Web
 {
     public class WeatherForecast
     {

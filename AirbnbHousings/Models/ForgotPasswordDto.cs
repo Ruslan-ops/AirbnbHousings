@@ -3,7 +3,7 @@ using Airbnb.Application.Requests.Auth.Commands.ForgotPassword;
 using Airbnb.Application.Requests.Auth.Commands.LoginEmail;
 using AutoMapper;
 
-namespace AirbnbHousings.Models
+namespace Web.Models
 {
     public class ForgotPasswordDto : IMapWith<ForgotPasswordCommand>
     {

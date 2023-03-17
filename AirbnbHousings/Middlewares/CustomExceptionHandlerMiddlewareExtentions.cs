@@ -1,4 +1,4 @@
-﻿namespace AirbnbHousings.Middlewares
+﻿namespace Web.Middlewares
 {
     public static class CustomExceptionHandlerMiddlewareExtentions
     {

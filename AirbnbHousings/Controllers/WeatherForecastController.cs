@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AirbnbHousings.Controllers
+namespace Web.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]

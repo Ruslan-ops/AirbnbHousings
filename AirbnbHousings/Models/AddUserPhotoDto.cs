@@ -3,7 +3,7 @@ using Airbnb.Application.Requests.Users.Commands.AddUserPhoto;
 using Airbnb.Application.Requests.Users.Commands.UpdateUser;
 using AutoMapper;
 
-namespace AirbnbHousings.Models
+namespace Web.Models
 {
     public class AddUserPhotoDto : IMapWith<AddUserPhotoCommand>
     {

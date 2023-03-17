@@ -3,7 +3,7 @@ using Airbnb.Application.Requests.Auth.Commands.RefreshPassword;
 using Airbnb.Application.Requests.Users.Commands.UpdateUser;
 using AutoMapper;
 
-namespace AirbnbHousings.Models
+namespace Web.Models
 {
     public class UpdateUserDto : IMapWith<UpdateUserCommand>
     {

@@ -3,7 +3,7 @@ using Airbnb.Application.Requests.Users.Commands.ChangeEmail;
 using AutoMapper;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions.Internal;
 
-namespace AirbnbHousings.Models
+namespace Web.Models
 {
     public class ChangeEmailDto : IMapWith<ChangeEmailCommand>
     {

@@ -3,13 +3,13 @@ using Airbnb.Application.Requests.Auth.Commands.ForgotPassword;
 using Airbnb.Application.Requests.Auth.Commands.LoginEmail;
 using Airbnb.Application.Requests.Auth.Commands.RefreshPassword;
 using Airbnb.Application.Requests.Auth.Commands.RegisterEmail;
-using AirbnbHousings.Models;
+using Web.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
-namespace AirbnbHousings.Controllers
+namespace Web.Controllers
 {
     [Authorize]
     [Route("auth")]

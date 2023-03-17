@@ -4,7 +4,7 @@ using System.Text.Json;
 using FluentValidation;
 using ValidationException = FluentValidation.ValidationException;
 
-namespace AirbnbHousings.Middlewares
+namespace Web.Middlewares
 {
     public class CustomExceptionHandlerMiddleware
     {

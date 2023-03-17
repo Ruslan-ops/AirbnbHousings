@@ -1,6 +1,6 @@
 ﻿using Airbnb.Application.Requests.HousingPhotos.Commands.CreateHousingPhoto;
 using Airbnb.Application.Requests.HousingPhotos.Commands.DeleteHousingPhoto;
-using AirbnbHousings.Models;
+using Web.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Minio;
 using Newtonsoft.Json;
 
-namespace AirbnbHousings.Controllers
+namespace Web.Controllers
 {
     [Authorize]
     [ApiController]

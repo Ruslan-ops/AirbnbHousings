@@ -2,7 +2,7 @@
 using Airbnb.Application.Requests.Users.Commands.DeleteUserPhoto;
 using AutoMapper;
 
-namespace AirbnbHousings.Models
+namespace Web.Models
 {
     public class DeleteUserPhotoDto : IMapWith<DeleteUserPhotoCommand>
     {

@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace AirbnbHousings.Controllers
+namespace Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]

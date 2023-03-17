@@ -3,7 +3,7 @@ using Airbnb.Application.Requests.Auth.Commands.LoginEmail;
 using Airbnb.Application.Requests.Auth.Commands.RegisterEmail;
 using AutoMapper;
 
-namespace AirbnbHousings.Models
+namespace Web.Models
 {
     public class LoginEmailDto : IMapWith<LoginEmailCommand>
     {

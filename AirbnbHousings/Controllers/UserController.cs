@@ -3,14 +3,14 @@ using Airbnb.Application.Requests.Users.Commands.ChangeEmail;
 using Airbnb.Application.Requests.Users.Commands.DeleteUserPhoto;
 using Airbnb.Application.Requests.Users.Commands.UpdateUser;
 using Airbnb.Application.Requests.Users.Queries.GetUser;
-using AirbnbHousings.Models;
+using Web.Models;
 using AutoMapper;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
-namespace AirbnbHousings.Controllers
+namespace Web.Controllers
 {
     [Authorize]
     [Route("user")]

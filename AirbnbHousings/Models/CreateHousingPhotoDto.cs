@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AirbnbHousings.Models
+namespace Web.Models
 {
     public class CreateHousingPhotoDto : IMapWith<CreateHousingPhotoCommand>
     {
