@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["AirbnbHousings/AirbnbHousings.csproj", "AirbnbHousings/"]
-RUN dotnet restore "AirbnbHousings/AirbnbHousings.csproj"
+COPY ["Airbnb.Web/Airbnb.Web.csproj", "Airbnb.Web/"]
+RUN dotnet restore "Airbnb.Web/Airbnb.Web.csproj"
 COPY . .
-WORKDIR "/src/AirbnbHousings"
-RUN dotnet build "AirbnbHousings.csproj" -c Release -o /app/build
+WORKDIR "/src/Airbnb.Web"
+RUN dotnet build "Airbnb.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "AirbnbHousings.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Airbnb.Web.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AirbnbHousings.dll"]
+ENTRYPOINT ["dotnet", "Airbnb.Web.dll"]
