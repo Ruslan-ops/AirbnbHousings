@@ -23,6 +23,7 @@ namespace AirbnbHousings.Controllers
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpGet("all")]
         public IActionResult Get()
         {

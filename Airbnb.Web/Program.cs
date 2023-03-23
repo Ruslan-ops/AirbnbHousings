@@ -15,7 +15,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-
+using System.Text.Json;
 
 try
 {
@@ -63,6 +63,7 @@ try
             var jwtOpts = Configuration
                 .GetSection("Jwt")
                 .Get<JwtOptions>()!;
+            Console.WriteLine($"jwtOpts: {JsonSerializer.Serialize(jwtOpts)}");
             options.TokenValidationParameters = new()
             {
                 ValidateIssuer = true,
@@ -86,7 +87,7 @@ try
 
 
     app.UseCustomExceptionHandler();
-    app.UseHttpsRedirection();
+    //app.UseHttpsRedirection();
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
