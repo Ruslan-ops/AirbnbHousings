@@ -45,9 +45,12 @@ namespace Airbnb.Application.Services
             await _airbnbContext.SaveChangesAsync();
         }
 
-        public async Task<Photo> DeleteHousingPhotoAsync(int photoId, int housingId, CancellationToken cancellationToken)
+        public async Task<Photo?> DeleteHousingPhotoAsync(int photoId, int housingId, CancellationToken cancellationToken)
         {
-            var photo = await _airbnbContext.Photos.AsNoTracking().FirstAsync(p => p.PhotoId == photoId, cancellationToken);
+            var housingPhotos = _airbnbContext.HousingPhotos.Where(hp => hp.PhotoId == photoId);
+            _airbnbContext.HousingPhotos.RemoveRange(housingPhotos);
+            var photo = await _airbnbContext.Photos.AsNoTracking().FirstOrDefaultAsync(p => p.PhotoId == photoId);
+            if (photo == null) { return null; }
             _airbnbContext.Photos.Remove(photo);
             await _airbnbContext.SaveChangesAsync(cancellationToken);
             return photo;
@@ -71,9 +74,12 @@ namespace Airbnb.Application.Services
             await _airbnbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<Photo> DeleteUserPhotoAsync(int photoId, CancellationToken cancellationToken)
+        public async Task<Photo?> DeleteUserPhotoAsync(int photoId, CancellationToken cancellationToken)
         {
-            var photo = await _airbnbContext.Photos.AsNoTracking().FirstAsync(p => p.PhotoId == photoId, cancellationToken);
+            var usersPhotos = _airbnbContext.UsersPhotos.Where(up => up.PhotoId == photoId);
+            _airbnbContext.UsersPhotos.RemoveRange(usersPhotos);
+            var photo = await _airbnbContext.Photos.AsNoTracking().FirstOrDefaultAsync(p => p.PhotoId == photoId);
+            if (photo == null) { return null; }
             _airbnbContext.Photos.Remove(photo);
             await _airbnbContext.SaveChangesAsync(cancellationToken);
             return photo;

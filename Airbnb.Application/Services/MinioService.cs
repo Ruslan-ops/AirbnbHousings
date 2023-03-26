@@ -24,7 +24,7 @@ namespace Airbnb.Application.Services
         public async Task<UploadResult> UploadPhotoAsync(IFormFile photo, S3PhotoDir photoDir)
         {
             var dir = System.Enum.GetName(photoDir);
-            var path = $@"/{dir}/{Guid.NewGuid()}.jpg" ;
+            var path = $@"{dir}/{Guid.NewGuid()}.jpg" ;
             return await UploadPhotoAsync(photo, path);
         }
 
