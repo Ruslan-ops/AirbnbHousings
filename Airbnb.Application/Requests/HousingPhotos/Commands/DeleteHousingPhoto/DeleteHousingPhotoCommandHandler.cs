@@ -1,4 +1,5 @@
-﻿using Airbnb.Application.Services;
+﻿using Airbnb.Application.Interfaces;
+using Airbnb.Application.Services;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -11,19 +12,19 @@ namespace Airbnb.Application.Requests.HousingPhotos.Commands.DeleteHousingPhoto
 {
     public class DeleteHousingPhotoCommandHandler : IRequestHandler<DeleteHousingPhotoCommand, Unit>
     {
-        private readonly MinioService _minioService;
+        private readonly IS3Storage _s3Storage;
         private readonly DatabaseService _databaseService;
 
-        public DeleteHousingPhotoCommandHandler(MinioService minioService, DatabaseService databaseService)
+        public DeleteHousingPhotoCommandHandler(IS3Storage s3Storage, DatabaseService databaseService)
         {
-            _minioService = minioService;
+            _s3Storage = s3Storage;
             _databaseService = databaseService;
         }
 
         public async Task<Unit> Handle(DeleteHousingPhotoCommand request, CancellationToken cancellationToken)
         {
             var deletedPhoto = await _databaseService.DeleteHousingPhotoAsync(request.PhotoId!.Value, request.HousingId!.Value, cancellationToken);
-            await _minioService.DeletePhotoAsync(deletedPhoto.Name);
+            await _s3Storage.DeletePhotoAsync(deletedPhoto.Name);
             return Unit.Value;
         }
     }

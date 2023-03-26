@@ -46,7 +46,7 @@ try
 
 
     builder.Services.AddScoped(CreateClient);
-    builder.Services.AddScoped<MinioService>();
+    builder.Services.AddScoped<IS3Storage, MinioService>();
     builder.Services.AddDbContext<AirbnbContext>(options =>
         options.UseNpgsql(Configuration.GetValue<string>("PostgresConnectionString")));
     builder.Services.AddScoped<DatabaseService>();

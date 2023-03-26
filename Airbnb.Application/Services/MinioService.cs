@@ -1,4 +1,5 @@
 ﻿using Airbnb.Application.Common.Options;
+using Airbnb.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Minio;
@@ -7,7 +8,7 @@ using System.Text.Json;
 
 namespace Airbnb.Application.Services
 {
-    public class MinioService
+    public class MinioService : IS3Storage
     {
         private readonly MinioClient _minioClient;
         private readonly MinioOptions _options;
@@ -20,14 +21,14 @@ namespace Airbnb.Application.Services
         }
 
 
-        public async Task<UploadResult> UploadPhotoAsync(IFormFile photo, MinioPhotoDir photoDir)
+        public async Task<UploadResult> UploadPhotoAsync(IFormFile photo, S3PhotoDir photoDir)
         {
             var dir = System.Enum.GetName(photoDir);
             var path = $@"/{dir}/{Guid.NewGuid()}.jpg" ;
             return await UploadPhotoAsync(photo, path);
         }
 
-        private async Task<UploadResult> UploadPhotoAsync(IFormFile photo, string path)
+        public async Task<UploadResult> UploadPhotoAsync(IFormFile photo, string path)
         {
             var stream = photo.OpenReadStream();
             var contentType = photo.ContentType;
@@ -42,8 +43,8 @@ namespace Airbnb.Application.Services
                 .WithContentType(contentType)
                 .WithObjectSize(photo.Length)
                 .WithStreamData(stream);
-            await _minioClient.PutObjectAsync(args);
 
+            await _minioClient.PutObjectAsync(args);
             var urlArgs = new PresignedGetObjectArgs().WithObject(objectName).WithBucket(bucketName).WithExpiry(60 * 60 * 24 * 7);
             var url = await _minioClient.PresignedGetObjectAsync(urlArgs);
             //await Console.Out.WriteLineAsync($"%%%% Url: {url}, ObjectName: {objectName}, Bucket: {bucketName}");
@@ -57,6 +58,7 @@ namespace Airbnb.Application.Services
             var args = new RemoveObjectArgs().WithObject(objectName).WithBucket(_options.BucketName);
             await _minioClient.RemoveObjectAsync(args);
         }
+
     }
 
     public struct UploadResult
@@ -66,7 +68,7 @@ namespace Airbnb.Application.Services
         public string Bucket { get; set; }
     }
 
-    public enum MinioPhotoDir
+    public enum S3PhotoDir
     {
         Housing = 1,
         User,
