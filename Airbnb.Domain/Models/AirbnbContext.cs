@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Airbnb.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Airbnb.Application;
+namespace Airbnb.Domain.Models;
 
 public partial class AirbnbContext : DbContext
 {

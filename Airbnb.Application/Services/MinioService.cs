@@ -45,8 +45,7 @@ namespace Airbnb.Application.Services
                 .WithStreamData(stream);
 
             await _minioClient.PutObjectAsync(args);
-            var urlArgs = new PresignedGetObjectArgs().WithObject(objectName).WithBucket(bucketName).WithExpiry(60 * 60 * 24 * 7);
-            var url = await _minioClient.PresignedGetObjectAsync(urlArgs);
+            var url = $@"http://{_options.Endpoint}/{bucketName}/{objectName}";
             //await Console.Out.WriteLineAsync($"%%%% Url: {url}, ObjectName: {objectName}, Bucket: {bucketName}");
             var result = new UploadResult { Bucket = bucketName, ObjectName = objectName, Url = url };
             await Console.Out.WriteLineAsync($"%%%% Upload internal result: {JsonSerializer.Serialize(result)}");
